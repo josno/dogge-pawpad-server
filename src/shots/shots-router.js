@@ -72,7 +72,7 @@ shotsRouter
 					});
 				}
 
-				ShotsService.deleteByGameId(
+				ShotsService.deleteByShotId(
 					res.app.get('db'),
 					req.params.shotId
 				).then(affectedshot => res.status(204).end());

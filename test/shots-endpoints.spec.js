@@ -181,7 +181,7 @@ describe('Shots Endpoints', function() {
 				return db.into('users').insert(testUsers);
 			});
 
-			it(`responds with 404 'Can't find game.' if there are no games that match the database`, () => {
+			it(`responds with 404 'Can't find shot.' if there are no shots that match the database`, () => {
 				const shotId = 0;
 				return supertest(app)
 					.delete(`/api/v1/shots/${shotId}`)

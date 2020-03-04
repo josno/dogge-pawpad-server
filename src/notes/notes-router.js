@@ -61,4 +61,22 @@ notesRouter
 			.then(notes => res.status(200).json(notes))
 			.catch(next);
 	});
+
+notesRouter
+	.route('/:noteId')
+	.all(requireAuth)
+	.delete((req, res, next) => {
+		NotesService.getNoteByNoteId(req.app.get('db'), req.params.noteId)
+			.then(note => {
+				if (!note || note.length === 0) {
+					return res.status(404).json({ error: `Can't find note.` });
+				}
+
+				NotesService.deleteByNoteId(
+					req.app.get('db'),
+					req.params.noteId
+				).then(deletedNote => res.status(204).end());
+			})
+			.catch(next);
+	});
 module.exports = notesRouter;

@@ -78,6 +78,38 @@ const makeShotToInsert = () => {
 	};
 };
 
+const makeExpectedNotes = () => {
+	return [
+		{
+			id: 1,
+			dog_id: 1,
+			notes: 'Winky needs to get his serum shots',
+			type_of_note: 'medical',
+			note_updated_by: 'Melanie',
+			created_by: 1,
+			date_created: '2020-01-31T05:52:34.948Z'
+		},
+		{
+			id: 2,
+			dog_id: 1,
+			notes: 'Winky is a puppy, separate from older dogs',
+			type_of_note: 'additional',
+			note_updated_by: 'Melanie',
+			created_by: 1,
+			date_created: '2020-01-31T05:52:34.948Z'
+		},
+		{
+			id: 3,
+			dog_id: 2,
+			notes: 'Coska is being considered for adoption',
+			type_of_note: 'additional',
+			note_updated_by: 'Sarah',
+			created_by: 2,
+			date_created: '2020-01-31T05:52:34.948Z'
+		}
+	];
+};
+
 const makeShotToUpdate = () => {
 	return {
 		shot_name: 'Rabies',
@@ -338,5 +370,6 @@ module.exports = {
 	makeUsersArray,
 	seedUsers,
 	makeAuthHeader,
-	makeExpectedShots
+	makeExpectedShots,
+	makeExpectedNotes
 };

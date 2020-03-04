@@ -18,7 +18,7 @@ const ShotsService = {
 			.returning('*')
 			.then(shotsArray => shotsArray[0]);
 	},
-	deleteByGameId(db, id) {
+	deleteByShotId(db, id) {
 		return db
 			.from('shots')
 			.where({ id })

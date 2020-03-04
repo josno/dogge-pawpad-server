@@ -117,4 +117,57 @@ describe('Notes Endpoints', function() {
 			});
 		});
 	});
+
+	describe.only(`DELETE /api/v1/notes/:noteId`, () => {
+		context(`Given no notes in database`, () => {
+			beforeEach('Insert Users', () => {
+				helpers.seedUsers(db, testUsers);
+			});
+
+			it(`returns 404 with 'Can't find note' message`, () => {
+				const testId = 49530;
+				return supertest(app)
+					.delete(`/api/v1/notes/${testId}`)
+					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.expect(404);
+			});
+		});
+
+		context(`Note found & successful deletion`, () => {
+			beforeEach('Insert data into tables', () => {
+				return db
+					.into('dogs')
+					.insert(dogs)
+					.then(res => {
+						return db.into('users').insert(testUsers);
+					})
+					.then(res => {
+						return db.into('shots').insert(shots);
+					})
+					.then(res => {
+						return db.into('notes').insert(notes);
+					});
+			});
+
+			it(`Deletes specified note`, () => {
+				const noteId = 1;
+				const dogId = 1;
+				const notes = helpers.makeExpectedNotes();
+				const expectedNotes = notes.filter(n => n.id !== noteId);
+				return supertest(app)
+					.delete(`/api/v1/notes/${noteId}`)
+					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.expect(204)
+					.then(res => {
+						supertest(app)
+							.get(`/api/v1/notes/${dogId}`)
+							.set(
+								'Authorization',
+								helpers.makeAuthHeader(testUser)
+							)
+							.expect(expectedNotes);
+					});
+			});
+		});
+	});
 });

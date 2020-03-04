@@ -11,6 +11,19 @@ const NotesService = {
 			.into('notes')
 			.returning('*')
 			.then(noteArray => noteArray[0]);
+	},
+	getNoteByNoteId(db, id) {
+		return db
+			.from('notes')
+			.select('*')
+			.where('id', id)
+			.first();
+	},
+	deleteByNoteId(db, id) {
+		return db
+			.from('notes')
+			.where({ id })
+			.delete();
 	}
 };
 
