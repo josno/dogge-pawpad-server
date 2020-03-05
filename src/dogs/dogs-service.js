@@ -25,7 +25,8 @@ const DogsService = {
 					`array_agg(
 						json_build_object(
 							'shot_name', shots.shot_name,
-							'shot_iscompleted', shots.shot_iscompleted
+							'shot_iscompleted', shots.shot_iscompleted,
+							'shot_date', shots.shot_date
 						))
 					AS "shotsCompleted"`
 				)

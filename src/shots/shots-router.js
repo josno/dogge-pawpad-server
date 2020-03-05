@@ -9,7 +9,7 @@ shotsRouter
 	.route('/')
 	.all(requireAuth)
 	.post(jsonBodyParser, (req, res, next) => {
-		const { shot_name, shot_iscompleted, dog_id } = req.body;
+		const { shot_name, shot_iscompleted, dog_id, shot_date } = req.body;
 
 		const newShot = {
 			shot_name,
