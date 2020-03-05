@@ -14,7 +14,8 @@ shotsRouter
 		const newShot = {
 			shot_name,
 			shot_iscompleted,
-			dog_id
+			dog_id,
+			shot_date
 		};
 
 		const requiredFields = { shot_name, shot_iscompleted, dog_id };
