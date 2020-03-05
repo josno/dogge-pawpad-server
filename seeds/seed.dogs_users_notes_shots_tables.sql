@@ -21,15 +21,15 @@ VALUES
 ('Coska will get his Complex 2 shot in February', 'medical', '2020-01-19 14:23:00', 2, 'Sarah', 2),
 ('Coska is being considered for adoption', 'additional', '2020-01-02 14:23:00', 2, 'Sarah', 2);
 
-INSERT INTO shots (shot_name, shot_iscompleted, dog_id)
+INSERT INTO shots (shot_name, shot_iscompleted, dog_id, shot_date)
 VALUES 
-('Rabies', true, 1),
-('Complex I', true, 1),
-('Complex II', true, 1),
-('Serum', true, 1),
-('Rabies', true, 2),
-('Complex I', true, 2),
-('Complex II', false , 2),
-('Fungus', true, 2);
+('Rabies', true, 1, '2020-01-19 14:23:00'),
+('Complex I', true, 1, '2020-01-19 14:23:00'),
+('Complex II', true, 1, '2020-01-19 14:23:00'),
+('Serum', true, 1,'2020-01-19 14:23:00'),
+('Rabies', true, 2,'2020-01-19 14:23:00'),
+('Complex I', true, 2,'2020-01-19 14:23:00'),
+('Complex II', false , 2,'2020-01-19 14:23:00'),
+('Fungus', true, 2,'2020-01-19 14:23:00');
 
 COMMIT;

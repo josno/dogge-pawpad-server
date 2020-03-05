@@ -42,12 +42,12 @@ notesRouter
 
 				return NotesService.insertNote(req.app.get('db'), newNote);
 			})
-			.then(response => {
+			.then(addedNote => {
 				res.status(201)
 					.location(
-						path.posix.join(req.originalUrl, `/${newNote.id}`)
+						path.posix.join(req.originalUrl, `/${addedNote.id}`)
 					)
-					.json(newNote);
+					.json(addedNote);
 			})
 			.catch(next);
 	});
