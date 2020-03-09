@@ -2,7 +2,7 @@ const ShotsService = {
 	getDogShotsbyDogId(db, dogId) {
 		return db
 			.from('shots')
-			.select('dog_id', 'shot_name', 'shot_iscompleted', 'id')
+			.select('*')
 			.where('dog_id', dogId);
 	},
 	updateDogShotByShotId(db, id, shot) {

@@ -114,7 +114,8 @@ const makeShotToUpdate = () => {
 	return {
 		shot_name: 'Rabies',
 		shot_iscompleted: false, //change from true
-		dog_id: 1
+		dog_id: 1,
+		shot_date: '2020-01-19 14:23:00'
 	};
 };
 

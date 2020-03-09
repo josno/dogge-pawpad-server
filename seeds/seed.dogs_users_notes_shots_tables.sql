@@ -9,10 +9,10 @@ VALUES
 ('pawpad', 'Pawpad', 'User', '$2a$16$rBYHHZYgVMKK/H/x2Y6tj.1owlHRwipUiSAWszknOarfc.0i2IkGu'), --pawpad123---
 ('demo', 'Demo', 'User', '$2a$16$Xk4/wWunwDxM0oUnl5K3deciTTraDvEL1QRT13pWWxRwitup2exS2'); --password--
 
-INSERT INTO dogs (dog_name, profile_img, age, gender, arrival_date, spayedneutered, updated_by)
+INSERT INTO dogs (dog_name, profile_img, age, gender, arrival_date, spayedneutered, updated_by, tag_number, microchip)
 VALUES 
-('Winky', 'https://raw.githubusercontent.com/josno/pawpad-client/master/src/assets/Winky.jpg', '2 months', 'Male', '2019-10-19 14:23:00', true, 'Melanie'),
-('Coska', 'https://raw.githubusercontent.com/josno/pawpad-client/master/src/assets/Coska.jpg', 'unknown', 'Female', '2019-7-28 12:00:00', false, 'Sarah');
+('Winky', 'https://raw.githubusercontent.com/josno/pawpad-client/master/src/assets/Winky.jpg', '2 months', 'Male', '2019-10-19 14:23:00', true, 'Melanie', '1233432423', '34324390'),
+('Coska', 'https://raw.githubusercontent.com/josno/pawpad-client/master/src/assets/Coska.jpg', 'unknown', 'Female', '2019-7-28 12:00:00', false, 'Sarah', '09384023', '7893234');
 
 INSERT INTO notes (notes, type_of_note, date_created, dog_id, note_updated_by, created_by)
 VALUES 

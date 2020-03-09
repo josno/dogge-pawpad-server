@@ -114,7 +114,7 @@ describe('Shots Endpoints', function() {
 		});
 	});
 
-	describe(`PATCH /api/v1/shots/:shotId`, () => {
+	describe.only(`PATCH /api/v1/shots/:shotId`, () => {
 		context(`given there is data in the tables`, () => {
 			beforeEach('Insert data into tables', () => {
 				return db

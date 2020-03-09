@@ -9,6 +9,8 @@ CREATE TABLE dogs (
     date_created TIMESTAMP DEFAULT NOW() NOT NULL, 
     arrival_date TIMESTAMP,
     spayedNeutered BOOLEAN NOT NULL, 
-    updated_by TEXT
+    updated_by TEXT,
+    tag_number TEXT,
+    microchip TEXT
 );
 

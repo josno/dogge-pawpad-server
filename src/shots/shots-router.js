@@ -81,14 +81,16 @@ shotsRouter
 			.catch(next);
 	})
 	.patch(jsonBodyParser, (req, res, next) => {
-		const { shot_name, shot_iscompleted, id } = req.body;
+		const { shot_name, shot_iscompleted, id, shot_date } = req.body;
 
 		const shotToUpdate = {
 			shot_name,
 			shot_iscompleted,
-			id
+			id,
+			shot_date
 		};
 
+		console.log(shotToUpdate);
 		const requiredFields = { shot_name, shot_iscompleted, id };
 
 		for (const [key, value] of Object.entries(requiredFields))
@@ -103,6 +105,7 @@ shotsRouter
 			shotToUpdate
 		)
 			.then(updatedShot => {
+				console.log(updatedShot);
 				if (!updatedShot || updatedShot.length === 0) {
 					return res.status(404).json({ error: `Can't find shot.` });
 				}
