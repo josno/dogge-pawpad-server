@@ -133,25 +133,29 @@ const makeExpectedShots = () => {
 			shot_name: 'Rabies',
 			shot_iscompleted: true,
 			dog_id: 1,
-			id: 1
+			id: 1,
+			shot_date: '2020-03-17T22:08:38.723Z'
 		},
 		{
 			shot_name: 'Complex I',
 			shot_iscompleted: true,
 			dog_id: 1,
-			id: 2
+			id: 2,
+			shot_date: '2020-03-17T22:08:38.723Z'
 		},
 		{
 			shot_name: 'Complex II',
 			shot_iscompleted: true,
 			dog_id: 1,
-			id: 3
+			id: 3,
+			shot_date: '2020-03-17T22:08:38.723Z'
 		},
 		{
 			shot_name: 'Serum',
 			shot_iscompleted: true,
 			dog_id: 1,
-			id: 4
+			id: 4,
+			shot_date: '2020-03-17T22:08:38.723Z'
 		}
 	];
 };
@@ -159,42 +163,50 @@ const makeExpectedShots = () => {
 const makeShotsArray = () => {
 	return [
 		{
+			shot_date: '2020-03-17T22:08:38.723122',
 			shot_name: 'Rabies',
 			shot_iscompleted: true,
 			dog_id: 1
 		},
 		{
+			shot_date: '2020-03-17T22:08:38.723122',
 			shot_name: 'Complex I',
 			shot_iscompleted: true,
 			dog_id: 1
 		},
 		{
+			shot_date: '2020-03-17T22:08:38.723122',
 			shot_name: 'Complex II',
 			shot_iscompleted: true,
 			dog_id: 1
 		},
 		{
+			shot_date: '2020-03-17T22:08:38.723122',
 			shot_name: 'Serum',
 			shot_iscompleted: true,
 			dog_id: 1
 		},
 
 		{
+			shot_date: '2020-03-17T22:08:38.723122',
 			shot_name: 'Rabies',
 			shot_iscompleted: true,
 			dog_id: 2
 		},
 		{
+			shot_date: '2020-03-17T22:08:38.723122',
 			shot_name: 'Complex I',
 			shot_iscompleted: true,
 			dog_id: 2
 		},
 		{
+			shot_date: '2020-03-17T22:08:38.723122',
 			shot_name: 'Complex II',
 			shot_iscompleted: false,
 			dog_id: 2
 		},
 		{
+			shot_date: '2020-03-17T22:08:38.723122',
 			shot_name: 'Fungus',
 			shot_iscompleted: true,
 			dog_id: 2
@@ -214,20 +226,26 @@ const makeExpectedNormalizedData = () => {
 			gender: 'Male',
 			spayedneutered: true,
 			updated_by: 'Melanie',
+			microchip: null,
+			tag_number: null,
 			shotsCompleted: [
 				{
+					shot_date: '2020-03-17T22:08:38.723122',
 					shot_name: 'Rabies',
 					shot_iscompleted: true
 				},
 				{
+					shot_date: '2020-03-17T22:08:38.723122',
 					shot_name: 'Complex I',
 					shot_iscompleted: true
 				},
 				{
+					shot_date: '2020-03-17T22:08:38.723122',
 					shot_name: 'Complex II',
 					shot_iscompleted: true
 				},
 				{
+					shot_date: '2020-03-17T22:08:38.723122',
 					shot_name: 'Serum',
 					shot_iscompleted: true
 				}
@@ -364,7 +382,6 @@ module.exports = {
 	makeNewDog,
 	makeDogToUpdate,
 	seedAllTables,
-	makeNewNote,
 	makeShotToInsert,
 	makeShotToUpdate,
 	makeBadShotToUpdate,

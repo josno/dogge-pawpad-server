@@ -21,6 +21,8 @@ const DogsService = {
 				'dogs.gender',
 				'dogs.spayedneutered',
 				'dogs.updated_by',
+				'dogs.tag_number',
+				'dogs.microchip',
 				db.raw(
 					`array_agg(
 						json_build_object(
@@ -42,7 +44,9 @@ const DogsService = {
 				'dogs.arrival_date',
 				'dogs.gender',
 				'dogs.spayedneutered',
-				'dogs.updated_by'
+				'dogs.updated_by',
+				'dogs.tag_number',
+				'dogs.microchip'
 			)
 			.then(dogArray => dogArray[0]);
 	},

@@ -118,7 +118,7 @@ describe('Notes Endpoints', function() {
 		});
 	});
 
-	describe.only(`DELETE /api/v1/notes/:noteId`, () => {
+	describe(`DELETE /api/v1/notes/:noteId`, () => {
 		context(`Given no notes in database`, () => {
 			beforeEach('Insert Users', () => {
 				helpers.seedUsers(db, testUsers);

@@ -33,7 +33,9 @@ dogsRouter
 			age,
 			gender,
 			spayedneutered,
-			arrival_date
+			arrival_date,
+			tag_number,
+			microchip
 		} = req.body;
 
 		const requiredFields = {
@@ -53,7 +55,9 @@ dogsRouter
 			age,
 			gender,
 			spayedneutered,
-			arrival_date
+			arrival_date,
+			tag_number,
+			microchip
 		};
 
 		cloudinary.uploader
