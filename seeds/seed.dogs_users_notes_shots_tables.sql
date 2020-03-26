@@ -23,9 +23,11 @@ VALUES
 
 INSERT INTO shots (shot_name, shot_iscompleted, dog_id, shot_date)
 VALUES 
-('Rabies', true, 1, '2020-01-19 14:23:00'),
+('Rabies I', true, 1, '2020-01-19 14:23:00'),
+('Rabies Yearly Booster', true, 1, '2020-01-19 14:23:00'),
 ('Complex I', true, 1, '2020-01-19 14:23:00'),
 ('Complex II', true, 1, '2020-01-19 14:23:00'),
+('Complex Yearly Booster', true, 1, '2020-01-19 14:23:00'),
 ('Serum', true, 1,'2020-01-19 14:23:00'),
 ('Rabies', true, 2,'2020-01-19 14:23:00'),
 ('Complex I', true, 2,'2020-01-19 14:23:00'),
