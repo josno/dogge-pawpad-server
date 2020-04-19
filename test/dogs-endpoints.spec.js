@@ -1,9 +1,9 @@
-const knex = require('knex');
-const app = require('../src/app');
-const helpers = require('./test-helpers');
-const supertest = require('supertest');
+const knex = require("knex");
+const app = require("../src/app");
+const helpers = require("./test-helpers");
+const supertest = require("supertest");
 
-describe('Dogs Endpoints', function() {
+describe("Dogs Endpoints", function () {
 	let db;
 
 	const dogs = helpers.makeDogsArray();
@@ -13,19 +13,19 @@ describe('Dogs Endpoints', function() {
 	const notes = helpers.makeNotesArray();
 	const shots = helpers.makeShotsArray();
 
-	before('make knex instance', () => {
+	before("make knex instance", () => {
 		db = knex({
-			client: 'pg',
-			connection: process.env.TEST_DATABASE_URL
+			client: "pg",
+			connection: process.env.TEST_DATABASE_URL,
 		});
-		app.set('db', db);
+		app.set("db", db);
 	});
 
-	after('disconnect from db', () => db.destroy());
+	after("disconnect from db", () => db.destroy());
 
-	before('clear tables', () => helpers.clearTables(db));
+	before("clear tables", () => helpers.clearTables(db));
 
-	afterEach('clear tables', () => helpers.clearTables(db));
+	afterEach("clear tables", () => helpers.clearTables(db));
 
 	/* ------ Methods api/v1/dogs --------- */
 
@@ -37,32 +37,32 @@ describe('Dogs Endpoints', function() {
 
 			it(`responds with 200 and an empty list`, () => {
 				return supertest(app)
-					.get('/api/v1/dogs')
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.get("/api/v1/dogs")
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(200, []);
 			});
 		});
 
 		context(`Given there is data in the tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('dogs')
+					.into("dogs")
 					.insert(dogs)
-					.then(res => {
-						return db.into('users').insert(testUsers);
+					.then((res) => {
+						return db.into("users").insert(testUsers);
 					})
-					.then(res => {
-						return db.into('shots').insert(shots);
+					.then((res) => {
+						return db.into("shots").insert(shots);
 					})
-					.then(res => {
-						return db.into('notes').insert(notes);
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
 
 			it(`responds with 200 and a list of dogs pictures, names and image URLs`, () => {
 				return supertest(app)
-					.get('/api/v1/dogs')
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.get("/api/v1/dogs")
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(200);
 			});
 		});
@@ -70,77 +70,75 @@ describe('Dogs Endpoints', function() {
 
 	describe(`POST /api/v1/dogs`, () => {
 		context(`Check against invalid entries with data in tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('dogs')
+					.into("dogs")
 					.insert(dogs)
-					.then(res => {
-						return db.into('users').insert(testUsers);
+					.then((res) => {
+						return db.into("users").insert(testUsers);
 					})
-					.then(res => {
-						return db.into('shots').insert(shots);
+					.then((res) => {
+						return db.into("shots").insert(shots);
 					})
-					.then(res => {
-						return db.into('notes').insert(notes);
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
 
-			const requiredFields = ['dog_name', 'spayedneutered'];
+			const requiredFields = ["dog_name", "spayedneutered"];
 			const newDog = helpers.makeNewDog();
-			requiredFields.forEach(field => {
+			requiredFields.forEach((field) => {
 				const dogAttemptBody = {
 					dog_name: newDog.dog_name,
 					spayedneutered: newDog.spayedneutered,
-					gender: newDog.gender
+					gender: newDog.gender,
 				};
 
 				it(`responds with 400 required error when '${field}' is missing`, () => {
 					delete dogAttemptBody[field]; //deletes the specified field first; then test
 
 					return supertest(app)
-						.post('/api/v1/dogs')
-						.set('Authorization', helpers.makeAuthHeader(testUser))
+						.post("/api/v1/dogs")
+						.set("Authorization", helpers.makeAuthHeader(testUser))
 						.field(dogAttemptBody)
-						.attach('profile_img', `test/max-test-img.jpg`)
+						.attach("profile_img", `test/max-test-img.jpg`)
 						.expect(400, {
-							error: `Missing '${field}' in request body`
+							error: `Missing '${field}' in request body`,
 						});
 				});
 			});
 		});
 
 		context(`Successful POST case with data in tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('users')
+					.into("users")
 					.insert(testUsers)
-					.then(res => {
-						db.into('dogs').insert(dogs);
+					.then((res) => {
+						db.into("dogs").insert(dogs);
 					})
-					.then(res => {
-						db.into('shots').insert(shots);
+					.then((res) => {
+						db.into("shots").insert(shots);
 					})
-					.then(res => {
-						db.into('notes').insert(notes);
+					.then((res) => {
+						db.into("notes").insert(notes);
 					});
 			});
 
-			it('responds 201 with created content', () => {
+			it("responds 201 with created content", () => {
 				const newDog = helpers.makeNewDog();
 				// helpers.seedUsers(db, testUsers);
 				return supertest(app)
 					.post(`/api/v1/dogs`)
-					.set('Authorization', helpers.makeAuthHeader(testUsers[1]))
+					.set("Authorization", helpers.makeAuthHeader(testUsers[1]))
 					.field(newDog)
-					.attach('profile_img', `test/max-test-img.jpg`)
+					.attach("profile_img", `test/max-test-img.jpg`)
 					.expect(201)
-					.then(res => {
-						expect(res.body).to.have.property('id');
+					.then((res) => {
+						expect(res.body).to.have.property("id");
 						expect(res.body.dog_name).to.eql(newDog.dog_name);
-						expect(res.body.spayedneutered).to.be.a('boolean');
-						expect(res.headers.location).to.eql(
-							`/api/v1/dogs/${res.body.id}`
-						);
+						expect(res.body.spayedneutered).to.be.a("boolean");
+						expect(res.headers.location).to.eql(`/api/v1/dogs/${res.body.id}`);
 					});
 			});
 		});
@@ -150,18 +148,18 @@ describe('Dogs Endpoints', function() {
 
 	describe(`GET api/v1/dogs/:dogId`, () => {
 		context(`given there is data in the tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('dogs')
+					.into("dogs")
 					.insert(dogs)
-					.then(res => {
-						return db.into('users').insert(testUsers);
+					.then((res) => {
+						return db.into("users").insert(testUsers);
 					})
-					.then(res => {
-						return db.into('shots').insert(shots);
+					.then((res) => {
+						return db.into("shots").insert(shots);
 					})
-					.then(res => {
-						return db.into('notes').insert(notes);
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
 
@@ -171,7 +169,7 @@ describe('Dogs Endpoints', function() {
 				const dogId = 1;
 				return supertest(app)
 					.get(`/api/v1/dogs/${dogId}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(200, normalizedData);
 			});
 
@@ -179,7 +177,7 @@ describe('Dogs Endpoints', function() {
 				const dogId = 98239432;
 				return supertest(app)
 					.get(`/api/v1/dogs/${dogId}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(404, { error: `Can't find dog.` });
 			});
 		});
@@ -187,30 +185,30 @@ describe('Dogs Endpoints', function() {
 
 	describe(`PATCH api/v1/dogs/:dogId`, () => {
 		context(`Check against invalid entries with data in tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('dogs')
+					.into("dogs")
 					.insert(dogs)
-					.then(res => {
-						return db.into('users').insert(testUsers);
+					.then((res) => {
+						return db.into("users").insert(testUsers);
 					})
-					.then(res => {
-						return db.into('shots').insert(shots);
+					.then((res) => {
+						return db.into("shots").insert(shots);
 					})
-					.then(res => {
-						return db.into('notes').insert(notes);
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
 
-			const requiredFields = ['dog_name', 'spayedneutered'];
+			const requiredFields = ["dog_name", "spayedneutered"];
 
-			requiredFields.forEach(field => {
+			requiredFields.forEach((field) => {
 				const dogAttemptBody = {
 					dog_name: testDog.dog_name,
 					spayedneutered: testDog.spayedneutered,
 					arrival_date: testDog.arrival_date,
 					gender: testDog.gender,
-					profile_img: testDog.profile_img
+					profile_img: testDog.profile_img,
 				};
 
 				it(`responds with 400 required error when '${field}' is missing`, () => {
@@ -218,10 +216,10 @@ describe('Dogs Endpoints', function() {
 					const dogId = 1;
 					return supertest(app)
 						.patch(`/api/v1/dogs/${dogId}`)
-						.set('Authorization', helpers.makeAuthHeader(testUser))
+						.set("Authorization", helpers.makeAuthHeader(testUser))
 						.send(dogAttemptBody)
 						.expect(400, {
-							error: `Missing '${field}' in request body`
+							error: `Missing '${field}' in request body`,
 						});
 				});
 			});
@@ -230,31 +228,31 @@ describe('Dogs Endpoints', function() {
 				const badDogId = 92384;
 				const dogAttemptBody = {
 					dog_name: testDog.dog_name,
-					spayedneutered: testDog.spayedneutered
+					spayedneutered: testDog.spayedneutered,
 				}; //change attembody
 				return supertest(app)
 					.patch(`/api/v1/dogs/${badDogId}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.send(dogAttemptBody)
 					.expect(404, {
-						error: `Can't find dog.`
+						error: `Can't find dog.`,
 					});
 			});
 		});
 
 		context(`Successful PATCH case with data in tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('dogs')
+					.into("dogs")
 					.insert(dogs)
-					.then(res => {
-						return db.into('users').insert(testUsers);
+					.then((res) => {
+						return db.into("users").insert(testUsers);
 					})
-					.then(res => {
-						return db.into('shots').insert(shots);
+					.then((res) => {
+						return db.into("shots").insert(shots);
 					})
-					.then(res => {
-						return db.into('notes').insert(notes);
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
 			it(`responds 204 No Content with updated dog`, () => {
@@ -262,13 +260,73 @@ describe('Dogs Endpoints', function() {
 
 				return supertest(app)
 					.patch(`/api/v1/dogs/${dogToUpdate.id}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.send(dogToUpdate)
 					.expect(204)
-					.then(response => {
+					.then((response) => {
 						supertest(app)
 							.get(`/api/v1/dogs/${dogToUpdate.id}`)
 							.expect(200, dogToUpdate);
+					});
+			});
+		});
+	});
+
+	describe.only(`DELETE 'api/v1/dogs/:dogId`, () => {
+		context(`given there is data in the tables`, () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("dogs")
+					.insert(dogs)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("shots").insert(shots);
+					})
+					.then((res) => {
+						return db.into("notes").insert(notes);
+					});
+			});
+			it(`responds with 404 'Can't find game.' if there are no games that match the database`, () => {
+				const dogId = 0;
+				return supertest(app)
+					.delete(`/api/v1/dogs/${dogId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.expect(404, { error: `Can't find dog.` });
+			});
+		});
+
+		context(`Dog found & successful deletion`, () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("dogs")
+					.insert(dogs)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("shots").insert(shots);
+					})
+					.then((res) => {
+						return db.into("notes").insert(notes);
+					});
+			});
+
+			it(`Deletes specified dog, shots and notes`, () => {
+				const noteId = 1;
+				const dogId = 1;
+				const notes = helpers.makeExpectedNotes();
+				const expectedDogs = dogs.filter((n) => n.id !== noteId);
+				return supertest(app)
+					.delete(`/api/v1/dogs/${noteId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.expect(204)
+					.then((res) => {
+						supertest(app)
+							.get(`/api/v1/dogs/${dogId}`)
+							.set("Authorization", helpers.makeAuthHeader(testUser))
+							.expect(expectedDogs);
 					});
 			});
 		});

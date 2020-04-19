@@ -1,28 +1,24 @@
 const DogsService = {
 	getAllDogs(db) {
-		return db.from('dogs').select('id', 'profile_img', 'dog_name');
+		return db.from("dogs").select("id", "profile_img", "dog_name");
 	},
 	getDogByDogId(db, id) {
-		return db
-			.from('dogs')
-			.select('*')
-			.where('id', id)
-			.first();
+		return db.from("dogs").select("*").where("id", id).first();
 	},
 	getNormalizedDogData(db, id) {
 		return db
-			.from('dogs')
+			.from("dogs")
 			.select(
-				'dogs.id',
-				'dogs.dog_name',
-				'dogs.profile_img',
-				'dogs.age',
-				'dogs.arrival_date',
-				'dogs.gender',
-				'dogs.spayedneutered',
-				'dogs.updated_by',
-				'dogs.tag_number',
-				'dogs.microchip',
+				"dogs.id",
+				"dogs.dog_name",
+				"dogs.profile_img",
+				"dogs.age",
+				"dogs.arrival_date",
+				"dogs.gender",
+				"dogs.spayedneutered",
+				"dogs.updated_by",
+				"dogs.tag_number",
+				"dogs.microchip",
 				db.raw(
 					`array_agg(
 						json_build_object(
@@ -33,35 +29,35 @@ const DogsService = {
 					AS "shotsCompleted"`
 				)
 			)
-			.where('dogs.id', id)
-			.leftJoin('shots as shots', 'shots.dog_id', 'dogs.id')
+			.where("dogs.id", id)
+			.leftJoin("shots as shots", "shots.dog_id", "dogs.id")
 			.groupBy(
-				'shots.dog_id',
-				'dogs.id',
-				'dogs.dog_name',
-				'dogs.profile_img',
-				'dogs.age',
-				'dogs.arrival_date',
-				'dogs.gender',
-				'dogs.spayedneutered',
-				'dogs.updated_by',
-				'dogs.tag_number',
-				'dogs.microchip'
+				"shots.dog_id",
+				"dogs.id",
+				"dogs.dog_name",
+				"dogs.profile_img",
+				"dogs.age",
+				"dogs.arrival_date",
+				"dogs.gender",
+				"dogs.spayedneutered",
+				"dogs.updated_by",
+				"dogs.tag_number",
+				"dogs.microchip"
 			)
-			.then(dogArray => dogArray[0]);
+			.then((dogArray) => dogArray[0]);
 	},
 	insertDog(db, newDog) {
 		return db
 			.insert(newDog)
-			.into('dogs')
-			.returning('*')
-			.then(dogArray => dogArray[0]);
+			.into("dogs")
+			.returning("*")
+			.then((dogArray) => dogArray[0]);
 	},
 	updateDogById(db, id, dog) {
-		return db
-			.from('dogs')
-			.where('id', id)
-			.update(dog);
-	}
+		return db.from("dogs").where("id", id).update(dog);
+	},
+	deleteByDogId(db, id) {
+		return db.from("dogs").where({ id }).delete();
+	},
 };
 module.exports = DogsService;
