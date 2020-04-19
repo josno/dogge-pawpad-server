@@ -50,7 +50,7 @@ notesRouter
 			})
 			.catch(next);
 	})
-	.delete((req, res, next) => {
+	.delete(jsonBodyParser, (req, res, next) => {
 		const { dogId } = req.body;
 		NotesService.deleteNoteByDogId(req.app.get("db"), dogId)
 			.then((note) => {

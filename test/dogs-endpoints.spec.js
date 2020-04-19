@@ -272,7 +272,7 @@ describe("Dogs Endpoints", function () {
 		});
 	});
 
-	describe.only(`DELETE 'api/v1/dogs/:dogId`, () => {
+	describe(`DELETE 'api/v1/dogs/:dogId`, () => {
 		context(`given there is data in the tables`, () => {
 			beforeEach("Insert data into tables", () => {
 				return db
