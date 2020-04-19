@@ -1,12 +1,12 @@
-const express = require('express');
-const path = require('path');
-const ShotsService = require('./shots-service');
-const { requireAuth } = require('../middleware/jwt-auth');
+const express = require("express");
+const path = require("path");
+const ShotsService = require("./shots-service");
+const { requireAuth } = require("../middleware/jwt-auth");
 const shotsRouter = express.Router();
 const jsonBodyParser = express.json();
 
 shotsRouter
-	.route('/')
+	.route("/")
 	.all(requireAuth)
 	.post(jsonBodyParser, (req, res, next) => {
 		const { shot_name, shot_iscompleted, dog_id, shot_date } = req.body;
@@ -15,7 +15,7 @@ shotsRouter
 			shot_name,
 			shot_iscompleted,
 			dog_id,
-			shot_date
+			shot_date,
 		};
 
 		const requiredFields = { shot_name, shot_iscompleted, dog_id };
@@ -23,32 +23,43 @@ shotsRouter
 		for (const [key, value] of Object.entries(requiredFields))
 			if (value == null || value == undefined)
 				return res.status(400).json({
-					error: `Missing '${key}' in request body`
+					error: `Missing '${key}' in request body`,
 				});
 
-		ShotsService.insertDogShot(req.app.get('db'), newShot)
-			.then(newShot => {
+		ShotsService.insertDogShot(req.app.get("db"), newShot)
+			.then((newShot) => {
 				if (!newShot) {
 					return res.status(400).json({
-						error: `Can't insert shot.`
+						error: `Can't insert shot.`,
 					});
 				}
 
-				res.status(201)
-					.location(
-						path.posix.join(req.originalUrl, `/${newShot.id}`)
-					)
+				res
+					.status(201)
+					.location(path.posix.join(req.originalUrl, `/${newShot.id}`))
 					.json(newShot);
+			})
+			.catch(next);
+	})
+	.delete(jsonBodyParser, (req, res, next) => {
+		const { dogId } = req.body;
+		ShotsService.deleteShotsByDogId(req.app.get("db"), dogId)
+			.then((shots) => {
+				if (!shots || shots.length === 0) {
+					return res.status(404).json({ error: `Can't find shots.` });
+				}
+
+				res.status(204).json(`No shots available.`);
 			})
 			.catch(next);
 	});
 
 shotsRouter
-	.route('/:dogId') // get shots for one specific dog
+	.route("/:dogId") // get shots for one specific dog
 	.all(requireAuth)
 	.get((req, res, next) => {
-		ShotsService.getDogShotsbyDogId(req.app.get('db'), req.params.dogId)
-			.then(response => {
+		ShotsService.getDogShotsbyDogId(req.app.get("db"), req.params.dogId)
+			.then((response) => {
 				if (response.length === 0) {
 					return res.status(404).send({ error: `Can't find dog.` });
 				}
@@ -58,25 +69,25 @@ shotsRouter
 	});
 
 shotsRouter
-	.route('/:shotId')
+	.route("/:shotId")
 	.all(requireAuth)
 	.delete((req, res, next) => {
 		ShotsService.getDogShotsbyShotId(
 			//check if game exists
-			res.app.get('db'),
+			res.app.get("db"),
 			req.params.shotId
 		)
-			.then(shot => {
+			.then((shot) => {
 				if (!shot || shot.length === 0) {
 					return res.status(404).json({
-						error: `Can't find shot.`
+						error: `Can't find shot.`,
 					});
 				}
 
 				ShotsService.deleteByShotId(
-					res.app.get('db'),
+					res.app.get("db"),
 					req.params.shotId
-				).then(affectedshot => res.status(204).end());
+				).then((affectedshot) => res.status(204).end());
 			})
 			.catch(next);
 	})
@@ -87,7 +98,7 @@ shotsRouter
 			shot_name,
 			shot_iscompleted,
 			id,
-			shot_date
+			shot_date,
 		};
 
 		const requiredFields = { shot_name, shot_iscompleted, id };
@@ -95,15 +106,15 @@ shotsRouter
 		for (const [key, value] of Object.entries(requiredFields))
 			if (value == null || value == undefined)
 				return res.status(400).json({
-					error: `Missing '${key}' in request body`
+					error: `Missing '${key}' in request body`,
 				});
 
 		ShotsService.updateDogShotByShotId(
-			req.app.get('db'),
+			req.app.get("db"),
 			req.params.shotId,
 			shotToUpdate
 		)
-			.then(updatedShot => {
+			.then((updatedShot) => {
 				if (!updatedShot || updatedShot.length === 0) {
 					return res.status(404).json({ error: `Can't find shot.` });
 				}

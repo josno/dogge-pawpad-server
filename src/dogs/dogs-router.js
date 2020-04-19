@@ -63,7 +63,7 @@ dogsRouter
 		cloudinary.uploader
 			.upload(imgPath, {
 				folder: "DOG.ge",
-				use_filename: true,
+				public_id: tag_number,
 			})
 			.then((result) => {
 				if (!result) {
@@ -174,6 +174,7 @@ dogsRouter
 					return res.status(404).json({ error: `Can't find dog.` });
 				}
 				console.log(dog);
+				cloudinary.uploader.destroy(`DOG.ge/${dog.tag_number}`);
 				DogsService.deleteByDogId(req.app.get("db"), dogId).then(
 					(rowsAffected) => {
 						res
