@@ -86,6 +86,55 @@ dogsRouter
 	});
 
 dogsRouter
+	.route("/images")
+	.all(requireAuth)
+	.post(jsonBodyParser, fileParser, (req, res, next) => {
+		const imgPath = req.files.profile_img.path;
+		const { tag_number } = req.body;
+		console.log(req.body, imgPath);
+
+		cloudinary.uploader
+			.upload(imgPath, {
+				folder: "DOG.ge",
+				public_id: tag_number,
+			})
+			.then((result) => {
+				if (!result) {
+					res.status(400).json({ error: `Can't upload image.` });
+				}
+				res.status(204).json(result.url);
+			})
+			.catch(next);
+	});
+dogsRouter
+	.route("/images/:tagNumber")
+	.all(requireAuth)
+	.delete((req, res, next) => {
+		const { tagNumber } = req.params;
+		cloudinary.uploader
+			.destroy(`DOG.ge/${tagNumber}`)
+			.then((response) => res.status(204).json("Image deleted"))
+			.catch(next);
+	})
+	.put(fileParser, (req, res, next) => {
+		console.log(req.files);
+		const imgPath = req.files.profile_img.path;
+		const { tagNumber } = req.params;
+		cloudinary.uploader
+			.upload(imgPath, {
+				folder: "DOG.ge",
+				public_id: tagNumber,
+			})
+			.then((result) => {
+				if (!result) {
+					res.status(400).json({ error: `Can't upload image.` });
+				}
+				res.status(200).json(result.url);
+			})
+			.catch(next);
+	});
+
+dogsRouter
 	.route("/:dogId")
 	.all(requireAuth)
 	.get((req, res, next) => {
@@ -98,7 +147,7 @@ dogsRouter
 			})
 			.catch(next);
 	})
-	.patch(jsonBodyParser, (req, res, next) => {
+	.patch(fileParser, jsonBodyParser, (req, res, next) => {
 		const { dogId } = req.params;
 
 		const {
