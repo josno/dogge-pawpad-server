@@ -110,6 +110,7 @@ dogsRouter
 	.route("/images/:tagNumber")
 	.all(requireAuth)
 	.delete((req, res, next) => {
+		res.setHeader("Access-Control-Allow-Origin", "*");
 		const { tagNumber } = req.params;
 		cloudinary.uploader
 			.destroy(`DOG.ge/${tagNumber}`)
@@ -117,6 +118,7 @@ dogsRouter
 			.catch(next);
 	})
 	.put(fileParser, (req, res, next) => {
+		res.setHeader("Access-Control-Allow-Origin", "*");
 		console.log(req.files);
 		const imgPath = req.files.profile_img.path;
 		const { tagNumber } = req.params;
