@@ -117,7 +117,7 @@ dogsRouter
 			.then((response) => res.status(204).json("Image deleted"))
 			.catch(next);
 	})
-	.put(fileParser, (req, res, next) => {
+	.put(jsonBodyParser, fileParser, (req, res, next) => {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		console.log(req.files);
 		const imgPath = req.files.profile_img.path;
