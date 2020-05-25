@@ -19,6 +19,9 @@ const DogsService = {
 				"dogs.updated_by",
 				"dogs.tag_number",
 				"dogs.microchip",
+				"dogs.dog_status",
+				"dogs.archive_date",
+				"dogs.adoption_date",
 				db.raw(
 					`array_agg(
 						json_build_object(
@@ -42,7 +45,10 @@ const DogsService = {
 				"dogs.spayedneutered",
 				"dogs.updated_by",
 				"dogs.tag_number",
-				"dogs.microchip"
+				"dogs.microchip",
+				"dogs.dog_status",
+				"dogs.archive_date",
+				"dogs.adoption_date"
 			)
 			.then((dogArray) => dogArray[0]);
 	},
@@ -59,23 +65,11 @@ const DogsService = {
 	deleteByDogId(db, id) {
 		return db.from("dogs").where({ id }).delete();
 	},
-	archiveDogById(db, id, date) {
-		return db
-			.from("dogs")
-			.where("id", id)
-			.update({ dog_status: "Archived", archive_date: date }, [
-				"id",
-				"dog_status",
-			]);
+	archiveDogById(db, id, dog) {
+		return db.from("dogs").where("id", id).update(dog);
 	},
-	adoptDogById(db, id, date) {
-		return db
-			.from("dogs")
-			.where("id", id)
-			.update({ dog_status: "Adopted", adoption_date: date }, [
-				"id",
-				"dog_status",
-			]);
+	adoptDogById(db, id, dog) {
+		return db.from("dogs").where("id", id).update(dog);
 	},
 };
 module.exports = DogsService;

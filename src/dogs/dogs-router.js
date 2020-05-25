@@ -234,4 +234,46 @@ dogsRouter
 			.catch(next);
 	});
 
+dogsRouter
+	.route("/:dogId/archive")
+	.all(requireAuth)
+	.patch(jsonBodyParser, (req, res, next) => {
+		const { archive_date } = req.body;
+		const dogObj = {
+			archive_date: new Date(archive_date).toISOString(),
+			dog_status: "Archived",
+		};
+
+		DogsService.archiveDogById(req.app.get("db"), req.params.dogId, dogObj)
+			.then((result) => {
+				console.log(result);
+				if (!result) {
+					res.status(400).json({ error: `Can't update dog status.` });
+				}
+				res.status(200).json({ message: "Updated dog status." });
+			})
+			.catch(next);
+	});
+
+dogsRouter
+	.route("/:dogId/adopt")
+	.all(requireAuth)
+	.patch(jsonBodyParser, (req, res, next) => {
+		const { adoption_date } = req.body;
+		const dogObj = {
+			adoption_date: new Date(adoption_date).toISOString(),
+			dog_status: "Adopted",
+		};
+
+		DogsService.adoptDogById(req.app.get("db"), req.params.dogId, dogObj)
+			.then((result) => {
+				console.log(result);
+				if (!result) {
+					res.status(400).json({ error: `Can't update dog status.` });
+				}
+				res.status(200).json({ message: "Updated dog status." });
+			})
+			.catch(next);
+	});
+
 module.exports = dogsRouter;
