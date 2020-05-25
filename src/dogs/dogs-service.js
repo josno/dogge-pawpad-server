@@ -66,10 +66,10 @@ const DogsService = {
 		return db.from("dogs").where({ id }).delete();
 	},
 	archiveDogById(db, id, dog) {
-		return db.from("dogs").where("id", id).update(dog);
+		return db.from("dogs").where("id", id).update(dog, ["id", "dog_status"]);
 	},
 	adoptDogById(db, id, dog) {
-		return db.from("dogs").where("id", id).update(dog);
+		return db.from("dogs").where("id", id).update(dog, ["id", "dog_status"]);
 	},
 };
 module.exports = DogsService;

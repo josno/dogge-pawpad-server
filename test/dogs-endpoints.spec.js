@@ -331,4 +331,82 @@ describe("Dogs Endpoints", function () {
 			});
 		});
 	});
+
+	describe(`PATCH 'api/v1/dogs/:dogId/adopt`, () => {
+		context(`given there is data in the tables`, () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("dogs")
+					.insert(dogs)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("shots").insert(shots);
+					})
+					.then((res) => {
+						return db.into("notes").insert(notes);
+					});
+			});
+
+			it(`responds with 400 'Can't update dog.' if :dogId doesn't exist`, () => {
+				const dogId = 0;
+				const testDate = { adoption_date: new Date().toISOString() };
+				return supertest(app)
+					.patch(`/api/v1/dogs/${dogId}/adopt`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(testDate)
+					.expect(400, { error: `Can't update dog status.` });
+			});
+
+			it(`responds with 200 'Dog status updated' if dogId exists`, () => {
+				const dogId = 1;
+				const testDate = { adoption_date: new Date().toISOString() };
+				return supertest(app)
+					.patch(`/api/v1/dogs/${dogId}/adopt`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(testDate)
+					.expect(200, { message: `Updated dog status.` });
+			});
+		});
+	});
+
+	describe.only(`PATCH 'api/v1/dogs/:dogId/archive`, () => {
+		context(`given there is data in the tables`, () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("dogs")
+					.insert(dogs)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("shots").insert(shots);
+					})
+					.then((res) => {
+						return db.into("notes").insert(notes);
+					});
+			});
+
+			it(`responds with 400 'Can't update dog.' if :dogId doesn't exist`, () => {
+				const dogId = 0;
+				const testDate = { archive_date: new Date().toISOString() };
+				return supertest(app)
+					.patch(`/api/v1/dogs/${dogId}/archive`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(testDate)
+					.expect(400, { error: `Can't update dog status.` });
+			});
+
+			it(`responds with 200 'Dog status updated' if dogId exists`, () => {
+				const dogId = 1;
+				const testDate = { archive_date: new Date().toISOString() };
+				return supertest(app)
+					.patch(`/api/v1/dogs/${dogId}/archive`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(testDate)
+					.expect(200, { message: `Updated dog status.` });
+			});
+		});
+	});
 });

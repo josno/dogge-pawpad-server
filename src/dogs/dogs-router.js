@@ -246,8 +246,7 @@ dogsRouter
 
 		DogsService.archiveDogById(req.app.get("db"), req.params.dogId, dogObj)
 			.then((result) => {
-				console.log(result);
-				if (!result) {
+				if (result.length === 0) {
 					res.status(400).json({ error: `Can't update dog status.` });
 				}
 				res.status(200).json({ message: "Updated dog status." });
@@ -267,8 +266,7 @@ dogsRouter
 
 		DogsService.adoptDogById(req.app.get("db"), req.params.dogId, dogObj)
 			.then((result) => {
-				console.log(result);
-				if (!result) {
+				if (result.length === 0) {
 					res.status(400).json({ error: `Can't update dog status.` });
 				}
 				res.status(200).json({ message: "Updated dog status." });

@@ -23,6 +23,9 @@ const makeDogsArray = () => {
 			gender: "Male",
 			spayedneutered: true,
 			updated_by: "Melanie",
+			dog_status: "Current",
+			adoption_date: null,
+			archive_date: null,
 		},
 		{
 			id: 2,
@@ -35,6 +38,9 @@ const makeDogsArray = () => {
 			gender: "Female",
 			spayedneutered: false,
 			updated_by: "Sarah",
+			dog_status: "Current",
+			adoption_date: null,
+			archive_date: null,
 		},
 	];
 };
