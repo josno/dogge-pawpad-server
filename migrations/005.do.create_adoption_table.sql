@@ -4,7 +4,7 @@ CREATE TABLE adoption (
   dog_id INTEGER REFERENCES dogs(id) ON DELETE SET NULL,
   adopter_name TEXT NOT NULL,
   adopter_email TEXT NOT NULL,
-  adopter_phone TEXT NOT NULL,
+  adopter_phone TEXT,
   adopter_country TEXT NOT NULL,
-  adopter_address TEXT NOT NULL
+  adopter_address TEXT
 );

@@ -16,6 +16,6 @@ CREATE TABLE dogs (
     microchip TEXT,
     dog_status dog_status,
     archive_date TIMESTAMP DEFAULT NOW(),
-    adoption_date TIMESTAMP
+    adoption_date TIMESTAMP ---- feed both adoption and dogs table
 );
 

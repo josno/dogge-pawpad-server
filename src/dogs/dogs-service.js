@@ -59,5 +59,23 @@ const DogsService = {
 	deleteByDogId(db, id) {
 		return db.from("dogs").where({ id }).delete();
 	},
+	archiveDogById(db, id, date) {
+		return db
+			.from("dogs")
+			.where("id", id)
+			.update({ dog_status: "Archived", archive_date: date }, [
+				"id",
+				"dog_status",
+			]);
+	},
+	adoptDogById(db, id, date) {
+		return db
+			.from("dogs")
+			.where("id", id)
+			.update({ dog_status: "Adopted", adoption_date: date }, [
+				"id",
+				"dog_status",
+			]);
+	},
 };
 module.exports = DogsService;
