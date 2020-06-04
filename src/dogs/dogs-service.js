@@ -1,6 +1,8 @@
 const DogsService = {
 	getAllDogs(db) {
-		return db.from("dogs").select("id", "profile_img", "dog_name");
+		return db
+			.from("dogs")
+			.select("id", "profile_img", "dog_name", "dog_status");
 	},
 	getDogByDogId(db, id) {
 		return db.from("dogs").select("*").where("id", id).first();

@@ -371,7 +371,7 @@ describe("Dogs Endpoints", function () {
 		});
 	});
 
-	describe.only(`PATCH 'api/v1/dogs/:dogId/archive`, () => {
+	describe(`PATCH 'api/v1/dogs/:dogId/archive`, () => {
 		context(`given there is data in the tables`, () => {
 			beforeEach("Insert data into tables", () => {
 				return db

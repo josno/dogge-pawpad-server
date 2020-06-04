@@ -238,9 +238,8 @@ dogsRouter
 	.route("/:dogId/archive")
 	.all(requireAuth)
 	.patch(jsonBodyParser, (req, res, next) => {
-		const { archive_date } = req.body;
 		const dogObj = {
-			archive_date: new Date(archive_date).toISOString(),
+			archive_date: new Date().toISOString(),
 			dog_status: "Archived",
 		};
 
