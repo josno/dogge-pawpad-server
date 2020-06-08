@@ -169,7 +169,7 @@ dogsRouter
 			arrival_date,
 		};
 
-		const requiredFields = { dog_name, spayedneutered };
+		const requiredFields = { dog_name };
 
 		for (const [key, value] of Object.entries(requiredFields))
 			if (value == null || value == undefined)
