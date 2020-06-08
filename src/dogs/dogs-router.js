@@ -58,6 +58,7 @@ dogsRouter
 			arrival_date,
 			tag_number,
 			microchip,
+			dog_status: "Current",
 		};
 
 		cloudinary.uploader

@@ -1,18 +1,18 @@
-const express = require('express');
-const UsersService = require('../users/users-service');
-const AuthService = require('../auth/auth-service');
+const express = require("express");
+const UsersService = require("../users/users-service");
+const AuthService = require("../auth/auth-service");
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
 
 /*From Registration Form*/
 
-usersRouter.post('/', jsonBodyParser, (req, res, next) => {
+usersRouter.post("/", jsonBodyParser, (req, res, next) => {
 	const { password, user_name, last_name, first_name } = req.body;
 
-	for (const field of ['first_name', 'last_name', 'user_name', 'password'])
+	for (const field of ["first_name", "last_name", "user_name", "password"])
 		if (!req.body[field])
 			return res.status(400).json({
-				error: `Missing '${field}' in request body`
+				error: `Missing '${field}' in request body`,
 			});
 
 	const usernameError = UsersService.validateUsername(user_name);
@@ -27,34 +27,30 @@ usersRouter.post('/', jsonBodyParser, (req, res, next) => {
 	const lastNameError = UsersService.validateLastName(last_name);
 	if (lastNameError) return res.status(400).json({ error: lastNameError });
 
-	UsersService.hasUserWithUserName(req.app.get('db'), user_name)
-		.then(user => {
+	UsersService.hasUserWithUserName(req.app.get("db"), user_name)
+		.then((user) => {
 			if (user)
-				return res
-					.status(400)
-					.json({ error: `Username is already taken.` });
+				return res.status(400).json({ error: `Username is already taken.` });
 
-			return UsersService.hashPassword(password).then(hashedPassword => {
+			return UsersService.hashPassword(password).then((hashedPassword) => {
 				const newUser = {
 					user_name,
 					password: hashedPassword,
 					first_name,
 					last_name,
-					date_created: 'now()'
+					date_created: "now()",
 				};
 
-				return UsersService.insertNewUser(req.app.get('db'), newUser)
-					.then(user => {
-						return (serializedUser = UsersService.serializeUser(
-							user
-						));
+				return UsersService.insertNewUser(req.app.get("db"), newUser)
+					.then((user) => {
+						return (serializedUser = UsersService.serializeUser(user));
 					})
-					.then(serializedUser => {
+					.then((serializedUser) => {
 						const sub = serializedUser.user_name;
 						const payload = { user_id: serializedUser.id };
 						res.status(201).send({
 							user: serializedUser,
-							authToken: AuthService.createJwt(sub, payload)
+							authToken: AuthService.createJwt(sub, payload),
 						});
 					});
 			});
