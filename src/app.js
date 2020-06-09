@@ -30,7 +30,7 @@ app.use("/api/v1/notes", notesRouter);
 app.use("/api/v1/shots", shotsRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", usersRouter);
-app.use("/api/v1/adopt", adoptionRouter);
+app.use("/api/v1/adoption", adoptionRouter);
 
 app.use(function errorHandler(error, req, res, next) {
 	let response;

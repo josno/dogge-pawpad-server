@@ -92,7 +92,6 @@ dogsRouter
 	.post(jsonBodyParser, fileParser, (req, res, next) => {
 		const imgPath = req.files.profile_img.path;
 		const { tag_number } = req.body;
-		console.log(req.body, imgPath);
 
 		cloudinary.uploader
 			.upload(imgPath, {

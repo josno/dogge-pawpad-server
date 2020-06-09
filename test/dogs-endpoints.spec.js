@@ -200,7 +200,7 @@ describe("Dogs Endpoints", function () {
 					});
 			});
 
-			const requiredFields = ["dog_name", "spayedneutered"];
+			const requiredFields = ["dog_name"];
 
 			requiredFields.forEach((field) => {
 				const dogAttemptBody = {

@@ -42,6 +42,21 @@ const makeDogsArray = () => {
 			adoption_date: null,
 			archive_date: null,
 		},
+		{
+			id: 3,
+			dog_name: "Third",
+			profile_img:
+				"https://raw.githubusercontent.com/josno/pawpad-client/master/src/dog-images/Coska.jpg",
+			age: "4 years",
+			date_created: "2020-01-31T18:16:54.653Z",
+			arrival_date: "2019-07-28T08:00:00.000Z",
+			gender: "Female",
+			spayedneutered: true,
+			updated_by: "Sarah",
+			dog_status: "Adopted",
+			adoption_date: null,
+			archive_date: null,
+		},
 	];
 };
 
@@ -66,7 +81,7 @@ const makeNotesArray = () => {
 	];
 };
 
-makeNewNote = () => {
+const makeNewNote = () => {
 	return {
 		date_created: "2020-02-13T16:05:56.766Z",
 		notes: "Test",
@@ -234,6 +249,9 @@ const makeExpectedNormalizedData = () => {
 			updated_by: "Melanie",
 			microchip: null,
 			tag_number: null,
+			adoption_date: null,
+			archive_date: null,
+			dog_status: "Current",
 			shotsCompleted: [
 				{
 					shot_date: "2020-03-17T22:08:38.723122",
@@ -317,6 +335,18 @@ const makeNewDog = () => {
 	};
 };
 
+const makeNewAdoption = () => {
+	return {
+		dog_id: 1,
+		adoption_date: "2020-05-19T10:23:00.000Z",
+		adopter_name: "Test Adopter",
+		adopter_phone: "111-111-1111",
+		adopter_country: "Poland",
+		adopter_email: "email@email.com",
+		adopter_address: "1 Hershey Way, Poland City, Poland, 21392132",
+	};
+};
+
 const seedDogsTable = (db, dogs) => {
 	return db
 		.into("dogs")
@@ -349,6 +379,7 @@ const clearTables = (db) => {
         notes,
 		shots,
 		users,
+		adoption,
         dogs
       `
 			)
@@ -358,6 +389,8 @@ const clearTables = (db) => {
 					trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE notes_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE shots_id_seq minvalue 0 START WITH 1`),
+					trx.raw(`ALTER SEQUENCE adoption_id_seq minvalue 0 START WITH 1`),
+					trx.raw(`SELECT setval('adoption_id_seq', 0)`),
 					trx.raw(`SELECT setval('notes_id_seq', 0)`),
 					trx.raw(`SELECT setval('shots_id_seq', 0)`),
 					trx.raw(`SELECT setval('users_id_seq', 0)`),
@@ -385,4 +418,5 @@ module.exports = {
 	makeExpectedShots,
 	makeExpectedNotes,
 	makeNewNote,
+	makeNewAdoption,
 };
