@@ -42,7 +42,7 @@ describe("Adoption endpoints", () => {
 		});
 	});
 
-	describe("POST /adoption", () => {
+	describe("POST /adoption/:dogId", () => {
 		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);
@@ -97,7 +97,7 @@ describe("Adoption endpoints", () => {
 		});
 	});
 
-	describe.only("DELETE /adoption/:dogId", () => {
+	describe("DELETE /adoption/:dogId", () => {
 		context("Given there is NO data in the tables", () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);

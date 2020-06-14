@@ -25,25 +25,38 @@ adoptionRouter
 			dog_id,
 		} = req.body;
 
-		const adoptionObj = {
-			adoption_date,
-			adopter_name,
-			adopter_email,
-			adopter_phone,
-			adopter_country,
-			adopter_address,
-			dog_id,
-		};
-
 		DogsService.getDogByDogId(req.app.get("db"), req.body.dog_id)
-			.then((response) => {
-				if (!response || response === undefined) {
+			.then((dog) => {
+				if (!dog || dog === undefined) {
 					res.status(404).json({ error: `Can't find dog.` });
 				} else {
-					return AdoptionService.insertAdoption(req.app.get("db"), adoptionObj);
+					const updateDogObj = {
+						dog_name: dog.dog_name,
+						dog_status: "Adopted",
+					};
+					return DogsService.updateDogById(
+						req.app.get("db"),
+						dog.id,
+						updateDogObj
+					);
 				}
 			})
+			.then((res) => {
+				// console.log(res);
+				const adoptionObj = {
+					adoption_date,
+					adopter_name,
+					adopter_email,
+					adopter_phone,
+					adopter_country,
+					adopter_address,
+					dog_id,
+				};
+
+				return AdoptionService.insertAdoption(req.app.get("db"), adoptionObj);
+			})
 			.then((adoptionRecord) => {
+				// console.log(adoptionRecord);
 				res
 					.status(201)
 					.location(path.posix.join(req.originalUrl, `/${adoptionRecord.id}`))
@@ -57,7 +70,12 @@ adoptionRouter
 	.all(requireAuth)
 	.get((req, res, next) => {
 		AdoptionService.getAdoptionBydogId(req.app.get("db"), req.params.dogId)
-			.then((response) => res.status(200).json(response))
+			.then((response) => {
+				if (!response) {
+					res.status(400).json({ error: `Can't find adoption information.` });
+				}
+				res.status(200).json(response);
+			})
 			.catch(next);
 	})
 	.delete((req, res, next) => {
@@ -65,8 +83,19 @@ adoptionRouter
 			.then((dog) => {
 				if (!dog || dog.length === 0) {
 					return res.status(404).json({ error: `Can't find dog.` });
+				} else {
+					const updateDogObj = {
+						dog_name: dog.dog_name,
+						dog_status: "Current",
+					};
+					return DogsService.updateDogById(
+						req.app.get("db"),
+						dog.id,
+						updateDogObj
+					);
 				}
-
+			})
+			.then((res) => {
 				return AdoptionService.deleteAdoption(
 					req.app.get("db"),
 					req.params.dogId

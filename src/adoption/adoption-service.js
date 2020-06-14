@@ -7,7 +7,7 @@ const AdoptionService = {
 			.then((array) => array[0]);
 	},
 	deleteAdoption(db, id) {
-		return db.from("adoption").where({ id }).delete();
+		return db.from("adoption").where("dog_id", id).delete();
 	},
 	getAdoptionBydogId(db, id) {
 		return db.from("adoption").select("*").where("dog_id", id).first();
