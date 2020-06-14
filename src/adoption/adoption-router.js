@@ -2,11 +2,20 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const AuthService = require("../auth/auth-service");
+const cloudinary = require("cloudinary").v2;
+const formData = require("express-form-data");
+const fileParser = formData.parse();
 const DogsService = require("../dogs/dogs-service");
 const AdoptionService = require("./adoption-service");
 const { requireAuth } = require("../middleware/jwt-auth");
 const adoptionRouter = express.Router();
 const jsonBodyParser = express.json();
+
+cloudinary.config({
+	cloud_name: process.env.CLOUDINARY_NAME,
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 adoptionRouter
 	.route("/")
@@ -14,7 +23,8 @@ adoptionRouter
 	.get((req, res, next) => {
 		res.status(200).send("hello");
 	})
-	.post(jsonBodyParser, (req, res, next) => {
+	.post(jsonBodyParser, fileParser, (req, res, next) => {
+		const imgPath = req.files.profile_img.path;
 		const {
 			adoption_date,
 			adopter_name,
@@ -25,7 +35,20 @@ adoptionRouter
 			dog_id,
 		} = req.body;
 
-		DogsService.getDogByDogId(req.app.get("db"), req.body.dog_id)
+		cloudinary.uploader
+			.upload(imgPath, {
+				folder: "DOG.ge/Contract_Images",
+				public_id: req.body.dog_id,
+			})
+			.then((result) => {
+				if (!result) {
+					res.status(400).json({ error: `Can't upload image.` });
+				}
+				console.log(result);
+
+				newDog.profile_img = result.secure_url;
+				return DogsService.getDogByDogId(req.app.get("db"), req.body.dog_id);
+			})
 			.then((dog) => {
 				if (!dog || dog === undefined) {
 					res.status(404).json({ error: `Can't find dog.` });

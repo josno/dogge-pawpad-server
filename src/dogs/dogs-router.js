@@ -70,7 +70,8 @@ dogsRouter
 				if (!result) {
 					res.status(400).json({ error: `Can't upload image.` });
 				}
-				newDog.profile_img = result.url;
+				console.log(result);
+				newDog.profile_img = result.secure_url;
 
 				return DogsService.insertDog(req.app.get("db"), newDog);
 			})
@@ -221,7 +222,7 @@ dogsRouter
 				if (!dog || dog.length === 0) {
 					return res.status(404).json({ error: `Can't find dog.` });
 				}
-				console.log(dog);
+
 				cloudinary.uploader.destroy(`DOG.ge/${dog.tag_number}`);
 				DogsService.deleteByDogId(req.app.get("db"), dogId).then(
 					(rowsAffected) => {
