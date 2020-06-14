@@ -27,17 +27,41 @@ describe("Adoption endpoints", () => {
 
 	afterEach("clear tables", () => helpers.clearTables(db));
 
-	describe("GET /adoption", () => {
+	describe("GET /adoption/:dogId", () => {
 		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);
 			});
 
-			it(`responds with 200`, () => {
+			it(`responds with 400 Can't find adoption information`, () => {
+				const dogTestId = 0;
 				return supertest(app)
-					.get("/api/v1/adoption")
+					.get(`/api/v1/adoption/${dogTestId}`)
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.expect(200, "hello");
+					.expect(400, { error: `Can't find adoption information.` });
+			});
+		});
+
+		context.only(`Given there is data in the tables`, () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("dogs")
+					.insert(dogs)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("adoption").insert(adoptions);
+					});
+			});
+			it(`responds with 200 with adoption information`, () => {
+				const dogTestId = 1;
+				const expectedAdoptionInfo = adoptions[0];
+				expectedAdoptionInfo.id = 1;
+				return supertest(app)
+					.get(`/api/v1/adoption/${dogTestId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+					.expect(200, expectedAdoptionInfo);
 			});
 		});
 	});
