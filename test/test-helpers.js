@@ -347,6 +347,29 @@ const makeNewAdoption = () => {
 	};
 };
 
+const makeAdoptionArray = () => {
+	return [
+		{
+			dog_id: 1,
+			adoption_date: "2020-05-19T10:23:00.000Z",
+			adopter_name: "Test Adopter",
+			adopter_phone: "111-111-1111",
+			adopter_country: "Poland",
+			adopter_email: "email@email.com",
+			adopter_address: "1 Hershey Way, Poland City, Poland, 21392132",
+		},
+		{
+			dog_id: 2,
+			adoption_date: "2020-04-20T10:23:00.000Z",
+			adopter_name: "Third Test",
+			adopter_phone: "222-222-2222",
+			adopter_country: "USA",
+			adopter_email: "email@email.com",
+			adopter_address: "1 Mars Way, USA City, USA, 95555",
+		},
+	];
+};
+
 const seedDogsTable = (db, dogs) => {
 	return db
 		.into("dogs")
@@ -419,4 +442,5 @@ module.exports = {
 	makeExpectedNotes,
 	makeNewNote,
 	makeNewAdoption,
+	makeAdoptionArray,
 };

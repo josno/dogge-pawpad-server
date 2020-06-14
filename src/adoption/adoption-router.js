@@ -44,13 +44,36 @@ adoptionRouter
 				}
 			})
 			.then((adoptionRecord) => {
-				if (!adoptionRecord) {
-					res.status(400).json({ error: `Can't add adoption details.` });
-				}
 				res
 					.status(201)
 					.location(path.posix.join(req.originalUrl, `/${adoptionRecord.id}`))
 					.json(adoptionRecord);
+			})
+			.catch(next);
+	});
+
+adoptionRouter
+	.route("/:dogId")
+	.all(requireAuth)
+	.get((req, res, next) => {
+		AdoptionService.getAdoptionBydogId(req.app.get("db"), req.params.dogId)
+			.then((response) => res.status(200).json(response))
+			.catch(next);
+	})
+	.delete((req, res, next) => {
+		DogsService.getDogByDogId(req.app.get("db"), req.params.dogId)
+			.then((dog) => {
+				if (!dog || dog.length === 0) {
+					return res.status(404).json({ error: `Can't find dog.` });
+				}
+
+				return AdoptionService.deleteAdoption(
+					req.app.get("db"),
+					req.params.dogId
+				);
+			})
+			.then((response) => {
+				res.status(204).end();
 			})
 			.catch(next);
 	});

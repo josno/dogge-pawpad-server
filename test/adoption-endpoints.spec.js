@@ -11,6 +11,7 @@ describe("Adoption endpoints", () => {
 	const shots = helpers.makeShotsArray();
 	const notes = helpers.makeNotesArray();
 	const newAdoption = helpers.makeNewAdoption();
+	const adoptions = helpers.makeAdoptionArray();
 
 	before("make knex instance", () => {
 		db = knex({
@@ -41,13 +42,13 @@ describe("Adoption endpoints", () => {
 		});
 	});
 
-	describe.only("POST /adoption", () => {
+	describe("POST /adoption", () => {
 		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);
 			});
 			//issues with HTTP headers
-			it(`responds with 404 Can't add adoption details`, () => {
+			it(`responds with 404 Can't find dog`, () => {
 				return supertest(app)
 					.post("/api/v1/adoption")
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
@@ -91,6 +92,54 @@ describe("Adoption endpoints", () => {
 						expect(res.headers.location).to.eql(
 							`/api/v1/adoption/${res.body.id}`
 						);
+					});
+			});
+		});
+	});
+
+	describe.only("DELETE /adoption/:dogId", () => {
+		context("Given there is NO data in the tables", () => {
+			beforeEach(`Seed users`, () => {
+				helpers.seedUsers(db, testUsers);
+			});
+
+			it(`Responds with 400 Can't find dog`, () => {
+				const dogIdTest = newAdoption.dog_id;
+				return supertest(app)
+					.delete(`/api/v1/adoption/${dogIdTest}`)
+					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+					.expect(404, { error: `Can't find dog.` });
+			});
+		});
+		context("Given there is data in the tables", () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("dogs")
+					.insert(dogs)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("adoption").insert(adoptions);
+					})
+					.then((res) => console.log("done"));
+			});
+
+			it(`Responds with 204 with successul deletion`, () => {
+				const dogIdTest = newAdoption.dog_id;
+				const expectedAdoptions = adoptions.filter(
+					(n) => n.dog_id !== dogIdTest
+				);
+
+				return supertest(app)
+					.delete(`/api/v1/adoption/${dogIdTest}`)
+					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+					.expect(204)
+					.then((res) => {
+						supertest(app)
+							.get(`/api/v1/adoption/${dogIdTest}`)
+							.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+							.expect(expectedAdoptions);
 					});
 			});
 		});
