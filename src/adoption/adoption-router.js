@@ -4,6 +4,7 @@ const path = require("path");
 const AuthService = require("../auth/auth-service");
 const cloudinary = require("cloudinary").v2;
 const formData = require("express-form-data");
+const CryptoJS = require("crypto-js");
 const fileParser = formData.parse();
 const DogsService = require("../dogs/dogs-service");
 const AdoptionService = require("./adoption-service");
@@ -24,16 +25,12 @@ adoptionRouter
 		res.status(200).send("hello");
 	})
 	.post(jsonBodyParser, fileParser, (req, res, next) => {
-		const imgPath = req.files.profile_img.path;
-		const {
-			adoption_date,
-			adopter_name,
-			adopter_email,
-			adopter_phone,
-			adopter_country,
-			adopter_address,
-			dog_id,
-		} = req.body;
+		const imgPath = req.files.contract_img.path;
+
+		var info = CryptoJS.AES.decrypt(req.body.data, "my-secret-key@123");
+		var data = JSON.parse(info.toString(CryptoJS.enc.Utf8));
+
+		const { adopter_name, adoption_date, email, phone, country } = data;
 
 		cloudinary.uploader
 			.upload(imgPath, {
@@ -44,7 +41,6 @@ adoptionRouter
 				if (!result) {
 					res.status(400).json({ error: `Can't upload image.` });
 				}
-				console.log(result);
 
 				newDog.profile_img = result.secure_url;
 				return DogsService.getDogByDogId(req.app.get("db"), req.body.dog_id);
@@ -72,7 +68,6 @@ adoptionRouter
 					adopter_email,
 					adopter_phone,
 					adopter_country,
-					adopter_address,
 					dog_id,
 				};
 
