@@ -30,20 +30,29 @@ adoptionRouter
 		var info = CryptoJS.AES.decrypt(req.body.data, "my-secret-key@123");
 		var data = JSON.parse(info.toString(CryptoJS.enc.Utf8));
 
-		const { adopter_name, adoption_date, email, phone, country } = data;
+		const { adopter_name, adoption_date, email, phone, country, dog_id } = data;
+
+		const adoptionObj = {
+			adoption_date,
+			adopter_name,
+			adopter_email: email,
+			adopter_phone: phone,
+			adopter_country: country,
+			dog_id,
+		};
 
 		cloudinary.uploader
 			.upload(imgPath, {
 				folder: "DOG.ge/Contract_Images",
-				public_id: req.body.dog_id,
+				public_id: dog_id,
 			})
 			.then((result) => {
 				if (!result) {
 					res.status(400).json({ error: `Can't upload image.` });
 				}
 
-				newDog.profile_img = result.secure_url;
-				return DogsService.getDogByDogId(req.app.get("db"), req.body.dog_id);
+				adoptionObj.contract_img_url = result.secure_url;
+				return DogsService.getDogByDogId(req.app.get("db"), dog_id);
 			})
 			.then((dog) => {
 				if (!dog || dog === undefined) {
@@ -61,16 +70,6 @@ adoptionRouter
 				}
 			})
 			.then((res) => {
-				// console.log(res);
-				const adoptionObj = {
-					adoption_date,
-					adopter_name,
-					adopter_email,
-					adopter_phone,
-					adopter_country,
-					dog_id,
-				};
-
 				return AdoptionService.insertAdoption(req.app.get("db"), adoptionObj);
 			})
 			.then((adoptionRecord) => {
@@ -92,7 +91,15 @@ adoptionRouter
 				if (!response) {
 					res.status(400).json({ error: `Can't find adoption information.` });
 				}
-				res.status(200).json(response);
+
+				const ciphertext = CryptoJS.AES.encrypt(
+					JSON.stringify(response),
+					"my-secret-key@123"
+				).toString();
+
+				const responseObj = { data: ciphertext };
+
+				res.status(200).json(responseObj);
 			})
 			.catch(next);
 	})
