@@ -15,6 +15,6 @@ CREATE TABLE dogs (
     tag_number TEXT,
     microchip TEXT,
     dog_status dog_status,
-    archive_date TIMESTAMP DEFAULT NOW(),
+    archive_date TIMESTAMP DEFAULT NOW()
 );
 
