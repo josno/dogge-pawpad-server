@@ -25,8 +25,6 @@ adoptionRouter
 		res.status(200).send("hello");
 	})
 	.post(jsonBodyParser, fileParser, (req, res, next) => {
-		const imgPath = req.files.contract_img.path;
-
 		var info = CryptoJS.AES.decrypt(req.body.data, "my-secret-key@123");
 		var data = JSON.parse(info.toString(CryptoJS.enc.Utf8));
 
@@ -41,17 +39,26 @@ adoptionRouter
 			dog_id,
 		};
 
-		cloudinary.uploader
-			.upload(imgPath, {
-				folder: "DOG.ge/Contract_Images",
-				public_id: dog_id,
-			})
-			.then((result) => {
-				if (!result) {
-					res.status(400).json({ error: `Can't upload image.` });
-				}
+		(async () => {
+			let responseJson;
+			if (req.files.contract_img) {
+				const imgPath = req.files.contract_img.path;
+				let response = await cloudinary.uploader.upload(imgPath, {
+					folder: "DOG.ge/Contract_Images",
+					public_id: dog_id,
+				});
+				responseJson = await response;
+			} else {
+				responseJson = null;
+			}
 
-				adoptionObj.contract_img_url = result.secure_url;
+			return responseJson;
+		})()
+			.then((result) => {
+				result === null
+					? (adoptionObj.contract_img_url = result)
+					: (adoptionObj.contract_img_url = result.secure_url);
+
 				return DogsService.getDogByDogId(req.app.get("db"), dog_id);
 			})
 			.then((dog) => {
@@ -129,6 +136,35 @@ adoptionRouter
 			.then((response) => {
 				res.status(204).end();
 			})
+			.catch(next);
+	});
+
+adoptionRouter
+	.route("/contract-upload/:dogId")
+	.all(requireAuth)
+	.put(jsonBodyParser, fileParser, (req, res, next) => {
+		const imgPath = req.files.contract_img.path;
+		const { dogId } = req.params;
+
+		const updatedAdoption = {};
+		cloudinary.uploader
+			.upload(imgPath, {
+				folder: "DOG.ge",
+				public_id: `${dogId}-contract`,
+			})
+			.then((result) => {
+				if (!result) {
+					res.status(400).json({ error: `Can't upload image.` });
+				}
+
+				updatedAdoption.contract_img_url = result.secure_url;
+				return AdoptionService.updateAdoptionImg(
+					req.app.get("db"),
+					req.params.dogId,
+					updatedAdoption
+				);
+			})
+			.then((response) => res.status(200).json({ message: "Contract Updated" }))
 			.catch(next);
 	});
 

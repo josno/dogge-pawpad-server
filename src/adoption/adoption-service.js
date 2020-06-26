@@ -12,6 +12,12 @@ const AdoptionService = {
 	getAdoptionBydogId(db, id) {
 		return db.from("adoption").select("*").where("dog_id", id).first();
 	},
+	updateAdoptionImg(db, id, adoption_url) {
+		return db
+			.from("adoption")
+			.where("dog_id", id)
+			.update(adoption_url, ["dog_id", "contract_img_url"]);
+	},
 };
 
 module.exports = AdoptionService;
