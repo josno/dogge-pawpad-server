@@ -9,6 +9,7 @@ const fileParser = formData.parse();
 const DogsService = require("../dogs/dogs-service");
 const AdoptionService = require("./adoption-service");
 const { requireAuth } = require("../middleware/jwt-auth");
+const { ENCRYPTION_KEY } = require("../config");
 const adoptionRouter = express.Router();
 const jsonBodyParser = express.json();
 
@@ -25,7 +26,7 @@ adoptionRouter
 		res.status(200).send("hello");
 	})
 	.post(jsonBodyParser, fileParser, (req, res, next) => {
-		var info = CryptoJS.AES.decrypt(req.body.data, "my-secret-key@123");
+		var info = CryptoJS.AES.decrypt(req.body.data, ENCRYPTION_KEY);
 		var data = JSON.parse(info.toString(CryptoJS.enc.Utf8));
 
 		const { adopter_name, adoption_date, email, phone, country, dog_id } = data;
@@ -101,7 +102,7 @@ adoptionRouter
 
 				const ciphertext = CryptoJS.AES.encrypt(
 					JSON.stringify(response),
-					"my-secret-key@123"
+					ENCRYPTION_KEY
 				).toString();
 
 				const responseObj = { data: ciphertext };
