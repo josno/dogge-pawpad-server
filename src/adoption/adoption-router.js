@@ -42,8 +42,8 @@ adoptionRouter
 
 		(async () => {
 			let responseJson;
-			if (req.files.contract_img) {
-				const imgPath = req.files.contract_img.path;
+			if (req.files.contract) {
+				const imgPath = req.files.contract.path;
 				let response = await cloudinary.uploader.upload(imgPath, {
 					folder: "DOG.ge/Contract_Images",
 					public_id: dog_id,
@@ -144,7 +144,7 @@ adoptionRouter
 	.route("/contract-upload/:dogId")
 	.all(requireAuth)
 	.put(jsonBodyParser, fileParser, (req, res, next) => {
-		const imgPath = req.files.contract_img.path;
+		const imgPath = req.files.contract.path;
 		const { dogId } = req.params;
 
 		const updatedAdoption = {};
