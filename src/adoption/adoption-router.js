@@ -41,24 +41,22 @@ adoptionRouter
 		};
 
 		(async () => {
-			let responseJson;
+			let responseJson = null;
 			if (req.files.contract) {
 				const imgPath = req.files.contract.path;
 				let response = await cloudinary.uploader.upload(imgPath, {
-					folder: "DOG.ge/Contract_Images",
-					public_id: dog_id,
+					folder: "DOG.ge/Contract_Files",
+					public_id: `${dog_id}-contract`,
 				});
-				responseJson = await response;
-			} else {
-				responseJson = null;
+				const resolved = await response;
+				responseJson = resolved;
 			}
-
 			return responseJson;
 		})()
 			.then((result) => {
 				result === null
-					? (adoptionObj.contract_img_url = result)
-					: (adoptionObj.contract_img_url = result.secure_url);
+					? (adoptionObj.contract_url = result)
+					: (adoptionObj.contract_url = result.secure_url);
 
 				return DogsService.getDogByDogId(req.app.get("db"), dog_id);
 			})
@@ -78,10 +76,12 @@ adoptionRouter
 				}
 			})
 			.then((res) => {
+				DogsService.getDogByDogId(req.app.get("db"), dog_id).then((response) =>
+					console.log(response)
+				);
 				return AdoptionService.insertAdoption(req.app.get("db"), adoptionObj);
 			})
 			.then((adoptionRecord) => {
-				// console.log(adoptionRecord);
 				res
 					.status(201)
 					.location(path.posix.join(req.originalUrl, `/${adoptionRecord.id}`))
@@ -97,7 +97,9 @@ adoptionRouter
 		AdoptionService.getAdoptionBydogId(req.app.get("db"), req.params.dogId)
 			.then((response) => {
 				if (!response) {
-					res.status(400).json({ error: `Can't find adoption information.` });
+					return res
+						.status(400)
+						.json({ error: `Can't find adoption information.` });
 				}
 
 				const ciphertext = CryptoJS.AES.encrypt(
@@ -150,7 +152,7 @@ adoptionRouter
 		const updatedAdoption = {};
 		cloudinary.uploader
 			.upload(imgPath, {
-				folder: "DOG.ge",
+				folder: "DOG.ge/Contract_Files",
 				public_id: `${dogId}-contract`,
 			})
 			.then((result) => {
@@ -158,7 +160,7 @@ adoptionRouter
 					res.status(400).json({ error: `Can't upload image.` });
 				}
 
-				updatedAdoption.contract_img_url = result.secure_url;
+				updatedAdoption.contract_url = result.secure_url;
 				return AdoptionService.updateAdoptionImg(
 					req.app.get("db"),
 					req.params.dogId,

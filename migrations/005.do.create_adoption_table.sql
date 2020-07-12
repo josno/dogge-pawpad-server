@@ -7,5 +7,5 @@ CREATE TABLE adoption (
   adopter_phone TEXT,
   adopter_country TEXT NOT NULL,
   adopter_address TEXT,
-  contract_img_url TEXT
+  contract_url TEXT
 );
