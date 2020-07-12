@@ -16,7 +16,7 @@ const AdoptionService = {
 		return db
 			.from("adoption")
 			.where("dog_id", id)
-			.update(adoption_url, ["dog_id", "contract_img_url"]);
+			.update(adoption_url, ["dog_id", "contract_url"]);
 	},
 };
 
