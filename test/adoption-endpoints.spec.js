@@ -42,7 +42,7 @@ describe("Adoption endpoints", () => {
 			});
 		});
 
-		context.only(`Given there is data in the tables`, () => {
+		context(`Given there is data in the tables`, () => {
 			beforeEach("Insert data into tables", () => {
 				return db
 					.into("dogs")
