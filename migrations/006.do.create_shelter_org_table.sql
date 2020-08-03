@@ -11,3 +11,8 @@ CREATE TABLE shelter (
   shelter_phone TEXT,
   shelter_email TEXT NOT NULL
 );
+
+ALTER TABLE users
+  ADD COLUMN
+    shelter_id INTEGER REFERENCES shelter(id)
+    ON DELETE SET NULL;
