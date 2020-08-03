@@ -348,16 +348,8 @@ const makeNewAdoption = () => {
 };
 
 const makeShelter = () => {
-	VALUES(
-		"Demo",
-		"demo",
-		"USA",
-		"Demo street",
-		"123-456",
-		"demo@gmail.com",
-		"current"
-	);
 	return {
+		id: 1,
 		shelter_name: "Demo",
 		shelter_username: "demo",
 		shelter_country: "United States",
@@ -390,6 +382,10 @@ const makeAdoptionArray = () => {
 			adopter_address: "1 Mars Way, USA City, USA, 95555",
 		},
 	];
+};
+
+const seedShelterTable = (db, shelter) => {
+	return db.into("shelter").insert(shelter);
 };
 
 const seedDogsTable = (db, dogs) => {
@@ -425,7 +421,8 @@ const clearTables = (db) => {
 		shots,
 		users,
 		adoption,
-        dogs
+		dogs,
+		shelter
       `
 			)
 			.then(() =>
@@ -435,11 +432,13 @@ const clearTables = (db) => {
 					trx.raw(`ALTER SEQUENCE notes_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE shots_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE adoption_id_seq minvalue 0 START WITH 1`),
+					trx.raw(`ALTER SEQUENCE shelter_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`SELECT setval('adoption_id_seq', 0)`),
 					trx.raw(`SELECT setval('notes_id_seq', 0)`),
 					trx.raw(`SELECT setval('shots_id_seq', 0)`),
 					trx.raw(`SELECT setval('users_id_seq', 0)`),
 					trx.raw(`SELECT setval('dogs_id_seq', 0)`),
+					trx.raw(`SELECT setval('shelter_id_seq', 0)`),
 				])
 			)
 	);
@@ -466,4 +465,5 @@ module.exports = {
 	makeNewAdoption,
 	makeAdoptionArray,
 	makeShelter,
+	seedShelterTable,
 };
