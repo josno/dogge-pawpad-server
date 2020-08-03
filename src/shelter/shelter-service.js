@@ -9,11 +9,11 @@ const ShelterService = {
 			.returning("*")
 			.then(([shelter]) => shelter);
 	},
-	hasUserWithUserName(db, shelter_username) {
+	hasShelterWithUserName(db, shelter_username) {
 		return db("shelter")
 			.where({ shelter_username })
 			.first()
-			.then((user) => !!user);
+			.then((shelter) => !!shelter);
 	},
 };
 
