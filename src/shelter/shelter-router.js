@@ -1,11 +1,9 @@
 const express = require("express");
-const UsersService = require("../users/users-service");
-const AuthService = require("../auth/auth-service");
 const ShelterService = require("./shelter-service");
 const shelterRouter = express.Router();
 const jsonBodyParser = express.json();
 
-shelterRouterpost("/", jsonBodyParser, (req, res, next) => {
+shelterRouter.post("/", jsonBodyParser, (req, res, next) => {
 	const {
 		shelter_name,
 		shelter_username,
@@ -57,4 +55,4 @@ shelterRouterpost("/", jsonBodyParser, (req, res, next) => {
 		.catch(next);
 });
 
-module.exports = usersRouter;
+module.exports = shelterRouter;
