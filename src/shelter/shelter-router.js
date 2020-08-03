@@ -32,7 +32,9 @@ shelterRouter.post("/", jsonBodyParser, (req, res, next) => {
 	ShelterService.hasShelterWithUserName(req.app.get("db"), shelter_username)
 		.then((shelter) => {
 			if (shelter)
-				return res.status(400).json({ error: `Username is already taken.` });
+				return res
+					.status(400)
+					.json({ error: `Shelter username is already taken.` });
 
 			const newShelter = {
 				shelter_name,
