@@ -347,6 +347,28 @@ const makeNewAdoption = () => {
 	};
 };
 
+const makeShelter = () => {
+	VALUES(
+		"Demo",
+		"demo",
+		"USA",
+		"Demo street",
+		"123-456",
+		"demo@gmail.com",
+		"current"
+	);
+	return {
+		shelter_name: "Demo",
+		shelter_username: "demo",
+		shelter_country: "United States",
+		shelter_address: "Shelter 1 Way, Shelter City",
+		shelter_phone: "1123-4567",
+		shelter_email: "demo@shelter.com",
+		shelter_join_date: "2020-05-19T10:23:00.000Z",
+		shelter_status: "current",
+	};
+};
+
 const makeAdoptionArray = () => {
 	return [
 		{
@@ -443,4 +465,5 @@ module.exports = {
 	makeNewNote,
 	makeNewAdoption,
 	makeAdoptionArray,
+	makeShelter,
 };
