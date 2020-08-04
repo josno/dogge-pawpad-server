@@ -26,8 +26,8 @@ adoptionRouter
 		res.status(200).send("hello");
 	})
 	.post(jsonBodyParser, fileParser, (req, res, next) => {
-		var info = CryptoJS.AES.decrypt(req.body.data, ENCRYPTION_KEY);
-		var data = JSON.parse(info.toString(CryptoJS.enc.Utf8));
+		let info = CryptoJS.AES.decrypt(req.body.data, ENCRYPTION_KEY);
+		let data = JSON.parse(info.toString(CryptoJS.enc.Utf8));
 
 		const { adopter_name, adoption_date, email, phone, country, dog_id } = data;
 
