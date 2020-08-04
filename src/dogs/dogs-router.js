@@ -142,7 +142,7 @@ dogsRouter
 				if (!result) {
 					res.status(400).json({ error: `Can't upload image.` });
 				}
-				res.status(200).json(result.secure.url);
+				res.status(200).json(result.secure_url);
 			})
 			.catch(next);
 	});
