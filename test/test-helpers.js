@@ -285,7 +285,7 @@ function makeUsersArray() {
 			user_name: "pawpad",
 			first_name: "Pawpad",
 			last_name: "User",
-			password: "$2a$16$rBYHHZYgVMKK/H/x2Y6tj.1owlHRwipUiSAWszknOarfc.0i2IkGu", //"pawpad123"
+			password: "pawpad123",
 			date_created: "2020-01-22T18:16:54.653Z",
 			shelter_id: 1,
 		},
@@ -294,7 +294,7 @@ function makeUsersArray() {
 			user_name: "demo",
 			first_name: "Demo",
 			last_name: "User",
-			password: "$2a$16$Xk4/wWunwDxM0oUnl5K3deciTTraDvEL1QRT13pWWxRwitup2exS2", //"password"
+			password: "password",
 			date_created: "2020-01-22T18:16:54.653Z",
 			shelter_id: 1,
 		},

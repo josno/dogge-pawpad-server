@@ -30,7 +30,7 @@ describe("Auth Endpoints", function () {
 			.into("shelter")
 			.insert(testShelter)
 			.then((res) => {
-				return db.into("users").insert(testUsers);
+				return helpers.seedUsers(db, testUsers);
 			});
 	});
 
@@ -104,27 +104,26 @@ describe("Auth Endpoints", function () {
 				.expect(400, { error: `Incorrect username or password` });
 		});
 
-		it.only(`responds 200 and JWT auth token using secret when valid credentials`, () => {
+		it(`responds 200 and JWT auth token using secret when valid credentials`, () => {
 			const userValidCreds = {
 				user_name: testUser.user_name,
-				password: "pawpad123",
+				password: testUser.password,
 				shelter_username: testShelter.shelter_username,
 			};
 
-			// const expectedToken = jwt.sign(
-			// 	{ user_id: testUser.id },
-			// 	process.env.JWT_SECRET,
-			// 	{
-			// 		subject: testUser.user_name,
-			// 		algorithm: "HS256",
-			// 	}
-			// );
-			// console.log(process.env.JWT_SECRET);
+			const expectedToken = jwt.sign(
+				{ user_id: testUser.id },
+				process.env.JWT_SECRET,
+				{
+					subject: testUser.user_name,
+					algorithm: "HS256",
+				}
+			);
 
 			return supertest(app)
 				.post("/api/v1/auth/login")
 				.send(userValidCreds)
-				.expect(200);
+				.expect(200, { authToken: expectedToken });
 		});
 	});
 });
