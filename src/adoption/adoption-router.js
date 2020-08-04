@@ -77,6 +77,7 @@ adoptionRouter
 			})
 			.then((res) => {
 				DogsService.getDogByDogId(req.app.get("db"), dog_id).then((response) =>
+					console.log(response)
 				);
 				return AdoptionService.insertAdoption(req.app.get("db"), adoptionObj);
 			})

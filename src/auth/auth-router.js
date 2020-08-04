@@ -6,8 +6,8 @@ const jsonBodyParser = express.json();
 const { ENCRYPTION_KEY } = require("../config");
 
 authRouter.post("/login", jsonBodyParser, (req, res, next) => {
-	const { user_name, password, shelter_username } = req.body;
-	const loginUser = { user_name, password, shelter_username };
+	const { user_name, password } = req.body;
+	const loginUser = { user_name, password };
 
 	for (const [key, value] of Object.entries(loginUser))
 		if (value == null)
@@ -15,23 +15,15 @@ authRouter.post("/login", jsonBodyParser, (req, res, next) => {
 				error: `Missing '${key}' in request body`,
 			});
 
-	Promise.all([
-		AuthService.getUserWithUserName(req.app.get("db"), loginUser.user_name),
-		AuthService.getShelterByUsername(
-			req.app.get("db"),
-			loginUser.shelter_username
-		),
-	])
-		.then((responseArray) => {
-			const dbUser = responseArray[0];
-			const shelterInfo = responseArray[1];
-
+	AuthService.getUserWithUserName(req.app.get("db"), loginUser.user_name)
+		.then((response) => {
+			const dbUser = response;
 			if (!dbUser)
 				return res.status(400).json({
 					error: "Incorrect username or password",
 				});
 
-			if (!shelterInfo || shelterInfo.id !== dbUser.shelter_id)
+			if (!dbUser.shelter_id)
 				return res.status(400).json({
 					error: "Shelter missing or does not match.",
 				});
