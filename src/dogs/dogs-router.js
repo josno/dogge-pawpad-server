@@ -29,11 +29,8 @@ dogsRouter
 		let info = CryptoJS.AES.decrypt(req.query.shelterId, ENCRYPTION_KEY);
 		const shelterId = JSON.parse(info.toString(CryptoJS.enc.Utf8));
 
-		console.log(shelterId);
-
 		DogsService.getAllDogsByShelterId(req.app.get("db"), shelterId)
 			.then((response) => {
-				console.log(response.length);
 				res.status(200).json(response);
 			})
 			.catch(next);
@@ -87,7 +84,6 @@ dogsRouter
 				if (!result) {
 					res.status(400).json({ error: `Can't upload image.` });
 				}
-				console.log(result);
 				newDog.profile_img = result.secure_url;
 
 				return DogsService.insertDog(req.app.get("db"), newDog);
