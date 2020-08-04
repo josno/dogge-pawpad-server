@@ -287,6 +287,7 @@ function makeUsersArray() {
 			last_name: "User",
 			password: "pawpad123",
 			date_created: "2020-01-22T18:16:54.653Z",
+			shelter_id: 1,
 		},
 		{
 			id: 2,
@@ -295,6 +296,7 @@ function makeUsersArray() {
 			last_name: "User",
 			password: "password",
 			date_created: "2020-01-22T18:16:54.653Z",
+			shelter_id: 1,
 		},
 	];
 }
@@ -347,6 +349,20 @@ const makeNewAdoption = () => {
 	};
 };
 
+const makeShelter = () => {
+	return {
+		id: 1,
+		shelter_name: "Demo",
+		shelter_username: "demo",
+		shelter_country: "United States",
+		shelter_address: "Shelter 1 Way, Shelter City",
+		shelter_phone: "1123-4567",
+		shelter_email: "demo@shelter.com",
+		shelter_join_date: "2020-05-19T10:23:00.000Z",
+		shelter_status: "current",
+	};
+};
+
 const makeAdoptionArray = () => {
 	return [
 		{
@@ -370,6 +386,10 @@ const makeAdoptionArray = () => {
 	];
 };
 
+const seedShelterTable = (db, shelter) => {
+	return db.into("shelter").insert(shelter);
+};
+
 const seedDogsTable = (db, dogs) => {
 	return db
 		.into("dogs")
@@ -380,9 +400,10 @@ const seedDogsTable = (db, dogs) => {
 		);
 };
 
-function seedAllTables(db, dogs, notes, shots, users) {
+function seedAllTables(db, shelter, dogs, notes, shots, users) {
 	// use a transaction to group the queries and auto rollback on any failure
 	return db.transaction(async (trx) => {
+		await seedShelterTable(trx, shelter);
 		await seedUsers(trx, users);
 		await seedDogsTable(trx, dogs);
 
@@ -403,7 +424,8 @@ const clearTables = (db) => {
 		shots,
 		users,
 		adoption,
-        dogs
+		dogs,
+		shelter
       `
 			)
 			.then(() =>
@@ -413,11 +435,13 @@ const clearTables = (db) => {
 					trx.raw(`ALTER SEQUENCE notes_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE shots_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE adoption_id_seq minvalue 0 START WITH 1`),
+					trx.raw(`ALTER SEQUENCE shelter_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`SELECT setval('adoption_id_seq', 0)`),
 					trx.raw(`SELECT setval('notes_id_seq', 0)`),
 					trx.raw(`SELECT setval('shots_id_seq', 0)`),
 					trx.raw(`SELECT setval('users_id_seq', 0)`),
 					trx.raw(`SELECT setval('dogs_id_seq', 0)`),
+					trx.raw(`SELECT setval('shelter_id_seq', 0)`),
 				])
 			)
 	);
@@ -443,4 +467,6 @@ module.exports = {
 	makeNewNote,
 	makeNewAdoption,
 	makeAdoptionArray,
+	makeShelter,
+	seedShelterTable,
 };

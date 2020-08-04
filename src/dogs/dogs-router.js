@@ -3,12 +3,14 @@ const express = require("express");
 const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const DogsService = require("./dogs-service");
+const CryptoJS = require("crypto-js");
 const AuthService = require("../auth/auth-service");
 const formData = require("express-form-data");
 const fileParser = formData.parse();
 const { requireAuth } = require("../middleware/jwt-auth");
 const dogsRouter = express.Router();
 const jsonBodyParser = express.json();
+const { ENCRYPTION_KEY } = require("../config");
 
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_NAME,
@@ -20,8 +22,18 @@ dogsRouter
 	.route("/")
 	.all(requireAuth)
 	.get((req, res, next) => {
-		DogsService.getAllDogs(req.app.get("db"))
+		if (!req.query.shelterId) {
+			res.status(400).json({ error: "Missing shelter information." });
+		}
+
+		let info = CryptoJS.AES.decrypt(req.query.shelterId, ENCRYPTION_KEY);
+		const shelterId = JSON.parse(info.toString(CryptoJS.enc.Utf8));
+
+		console.log(shelterId);
+
+		DogsService.getAllDogsByShelterId(req.app.get("db"), shelterId)
 			.then((response) => {
+				console.log(response.length);
 				res.status(200).json(response);
 			})
 			.catch(next);
@@ -36,6 +48,7 @@ dogsRouter
 			arrival_date,
 			tag_number,
 			microchip,
+			shelter_id,
 		} = req.body;
 
 		const requiredFields = {
@@ -60,6 +73,10 @@ dogsRouter
 			microchip,
 			dog_status: "Current",
 		};
+
+		let info = CryptoJS.AES.decrypt(shelter_id, ENCRYPTION_KEY);
+
+		newDog.shelter_id = JSON.parse(info.toString(CryptoJS.enc.Utf8));
 
 		cloudinary.uploader
 			.upload(imgPath, {
