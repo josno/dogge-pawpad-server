@@ -4,6 +4,12 @@ const DogsService = {
 			.from("dogs")
 			.select("id", "profile_img", "dog_name", "dog_status");
 	},
+	getAllDogsByShelterId(db, shelterId) {
+		return db
+			.from("dogs")
+			.select("id", "profile_img", "dog_name", "dog_status")
+			.where("shelter_id", shelterId);
+	},
 	getDogByDogId(db, id) {
 		return db.from("dogs").select("*").where("id", id).first();
 	},
