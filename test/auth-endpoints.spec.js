@@ -1,92 +1,130 @@
-const knex = require('knex');
-const jwt = require('jsonwebtoken');
-const app = require('../src/app');
-const helpers = require('./test-helpers');
+const knex = require("knex");
+const jwt = require("jsonwebtoken");
+const app = require("../src/app");
+const helpers = require("./test-helpers");
 
-describe('Auth Endpoints', function() {
+describe("Auth Endpoints", function () {
 	let db;
 
 	const testUsers = helpers.makeUsersArray();
-	const testUser = testUsers[1];
+	const testUser = testUsers[0];
 
-	before('make knex instance', () => {
+	const testShelter = helpers.makeShelter();
+
+	before("make knex instance", () => {
 		db = knex({
-			client: 'pg',
-			connection: process.env.TEST_DATABASE_URL
+			client: "pg",
+			connection: process.env.TEST_DATABASE_URL,
 		});
-		app.set('db', db);
+		app.set("db", db);
 	});
 
-	after('disconnect from db', () => db.destroy());
+	after("disconnect from db", () => db.destroy());
 
-	before('cleanup', () => helpers.clearTables(db));
+	before("cleanup", () => helpers.clearTables(db));
 
-	afterEach('cleanup', () => helpers.clearTables(db));
-
-	beforeEach('insert users', () => helpers.seedUsers(db, testUsers));
+	afterEach("cleanup", () => helpers.clearTables(db));
+	// db, shelter, dogs, notes, shots, users
+	beforeEach("insert users and shelter", () => {
+		return db
+			.into("shelter")
+			.insert(testShelter)
+			.then((res) => {
+				return db.into("users").insert(testUsers);
+			});
+	});
 
 	describe(`POST /api/auth/login`, () => {
-		const requiredFields = ['user_name', 'password'];
+		const requiredFields = ["user_name", "password", "shelter_username"];
 
-		requiredFields.forEach(field => {
+		requiredFields.forEach((field) => {
 			const loginAttemptBody = {
 				user_name: testUser.user_name,
-				password: testUser.password
+				password: testUser.password,
+				shelter_username: testShelter.shelter_username,
 			};
 
 			it(`responds with 400 required error when '${field}' is missing`, () => {
 				delete loginAttemptBody[field]; //deletes the specified field first; then test
 
 				return supertest(app)
-					.post('/api/v1/auth/login')
+					.post("/api/v1/auth/login")
 					.send(loginAttemptBody)
 					.expect(400, {
-						error: `Missing '${field}' in request body`
+						error: `Missing '${field}' in request body`,
 					});
 			});
 		});
 
 		it(`responds 400 'invalid user_name or password' when bad user_name`, () => {
 			const userInvalidUser = {
-				user_name: 'user-not',
-				password: 'existy'
+				user_name: "user-not",
+				password: testUser.password,
+				shelter_username: testShelter.shelter_username,
 			};
 			return supertest(app)
-				.post('/api/v1/auth/login')
+				.post("/api/v1/auth/login")
 				.send(userInvalidUser)
 				.expect(400, { error: `Incorrect username or password` });
+		});
+
+		it(`responds 400 'Shelter missing or does not match.' when missing shelter username.`, () => {
+			const userInvalidUser = {
+				user_name: testUser.user_name,
+				password: testUser.password,
+				shelter_username: "",
+			};
+			return supertest(app)
+				.post("/api/v1/auth/login")
+				.send(userInvalidUser)
+				.expect(400, { error: `Shelter missing or does not match.` });
+		});
+
+		it(`responds 400 'Shelter missing or does not match.' with bad shelter username.`, () => {
+			const invalidShelter = {
+				user_name: testUser.user_name,
+				password: testUser.password,
+				shelter_username: "wrong shelter",
+			};
+			return supertest(app)
+				.post("/api/v1/auth/login")
+				.send(invalidShelter)
+				.expect(400, { error: `Shelter missing or does not match.` });
 		});
 
 		it(`responds 400 'invalid user_name or password' when bad password`, () => {
 			const userInvalidPass = {
 				user_name: testUser.user_name,
-				password: 'incorrect'
+				password: "incorrect",
+				shelter_username: testShelter.shelter_username,
 			};
 			return supertest(app)
-				.post('/api/v1/auth/login')
+				.post("/api/v1/auth/login")
 				.send(userInvalidPass)
 				.expect(400, { error: `Incorrect username or password` });
 		});
 
-		it(`responds 200 and JWT auth token using secret when valid credentials`, () => {
+		it.only(`responds 200 and JWT auth token using secret when valid credentials`, () => {
 			const userValidCreds = {
 				user_name: testUser.user_name,
-				password: testUser.password
+				password: "pawpad123",
+				shelter_username: testShelter.shelter_username,
 			};
-			const expectedToken = jwt.sign(
-				{ user_id: testUser.id },
-				process.env.JWT_SECRET,
-				{
-					subject: testUser.user_name,
-					algorithm: 'HS256'
-				}
-			);
+
+			// const expectedToken = jwt.sign(
+			// 	{ user_id: testUser.id },
+			// 	process.env.JWT_SECRET,
+			// 	{
+			// 		subject: testUser.user_name,
+			// 		algorithm: "HS256",
+			// 	}
+			// );
+			// console.log(process.env.JWT_SECRET);
+
 			return supertest(app)
-				.post('/api/v1/auth/login')
+				.post("/api/v1/auth/login")
 				.send(userValidCreds)
-				.expect(200, {
-					authToken: expectedToken
-				});
+				.expect(200);
 		});
 	});
 });

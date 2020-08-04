@@ -285,16 +285,18 @@ function makeUsersArray() {
 			user_name: "pawpad",
 			first_name: "Pawpad",
 			last_name: "User",
-			password: "pawpad123",
+			password: "$2a$16$rBYHHZYgVMKK/H/x2Y6tj.1owlHRwipUiSAWszknOarfc.0i2IkGu", //"pawpad123"
 			date_created: "2020-01-22T18:16:54.653Z",
+			shelter_id: 1,
 		},
 		{
 			id: 2,
 			user_name: "demo",
 			first_name: "Demo",
 			last_name: "User",
-			password: "password",
+			password: "$2a$16$Xk4/wWunwDxM0oUnl5K3deciTTraDvEL1QRT13pWWxRwitup2exS2", //"password"
 			date_created: "2020-01-22T18:16:54.653Z",
+			shelter_id: 1,
 		},
 	];
 }
@@ -398,9 +400,10 @@ const seedDogsTable = (db, dogs) => {
 		);
 };
 
-function seedAllTables(db, dogs, notes, shots, users) {
+function seedAllTables(db, shelter, dogs, notes, shots, users) {
 	// use a transaction to group the queries and auto rollback on any failure
 	return db.transaction(async (trx) => {
+		await seedShelterTable(trx, shelter);
 		await seedUsers(trx, users);
 		await seedDogsTable(trx, dogs);
 
