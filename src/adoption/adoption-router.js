@@ -82,10 +82,7 @@ adoptionRouter
 				return AdoptionService.insertAdoption(req.app.get("db"), adoptionObj);
 			})
 			.then((adoptionRecord) => {
-				res
-					.status(201)
-					.location(path.posix.join(req.originalUrl, `/${adoptionRecord.id}`))
-					.json(adoptionRecord);
+				res.status(201).json({ message: "Adoption completed." });
 			})
 			.catch(next);
 	});
