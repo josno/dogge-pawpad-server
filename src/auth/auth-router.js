@@ -1,9 +1,7 @@
 const express = require("express");
 const AuthService = require("./auth-service");
-const CryptoJS = require("crypto-js");
 const authRouter = express.Router();
 const jsonBodyParser = express.json();
-const { ENCRYPTION_KEY } = require("../config");
 
 authRouter.post("/login", jsonBodyParser, (req, res, next) => {
 	const { user_name, password } = req.body;
@@ -40,14 +38,9 @@ authRouter.post("/login", jsonBodyParser, (req, res, next) => {
 				const sub = dbUser.user_name;
 				const payload = { user_id: dbUser.id };
 
-				let ciphertext = CryptoJS.AES.encrypt(
-					JSON.stringify(dbUser.shelter_id),
-					ENCRYPTION_KEY
-				).toString();
-
 				res.status(200).send({
 					authToken: AuthService.createJwt(sub, payload),
-					shelterId: ciphertext,
+					shelterId: dbUser.shelter_id,
 				});
 			});
 		})
