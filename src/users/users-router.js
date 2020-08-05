@@ -71,9 +71,8 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
 					.then((serializedUser) => {
 						const sub = serializedUser.user_name;
 						const payload = { user_id: serializedUser.id };
-
-						res.status(201).send({
-							user: serializedUser,
+						res.status(201).json({
+							shelterId: serializedUser.shelter_id,
 							authToken: AuthService.createJwt(sub, payload),
 						});
 					});

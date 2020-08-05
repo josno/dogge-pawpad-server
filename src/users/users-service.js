@@ -56,6 +56,7 @@ const UsersService = {
 			last_name: xss(user.last_name),
 			user_name: xss(user.user_name),
 			date_created: new Date(user.date_created),
+			shelter_id: user.shelter_id,
 		};
 	},
 	hashPassword(password) {
