@@ -7,9 +7,21 @@ const jsonBodyParser = express.json();
 /*From Registration Form*/
 
 usersRouter.post("/", jsonBodyParser, (req, res, next) => {
-	const { password, user_name, last_name, first_name } = req.body;
+	const {
+		password,
+		user_name,
+		last_name,
+		first_name,
+		shelter_username,
+	} = req.body;
 
-	for (const field of ["first_name", "last_name", "user_name", "password"])
+	for (const field of [
+		"first_name",
+		"last_name",
+		"user_name",
+		"password",
+		"shelter_username",
+	])
 		if (!req.body[field])
 			return res.status(400).json({
 				error: `Missing '${field}' in request body`,
@@ -27,19 +39,30 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
 	const lastNameError = UsersService.validateLastName(last_name);
 	if (lastNameError) return res.status(400).json({ error: lastNameError });
 
-	UsersService.hasUserWithUserName(req.app.get("db"), user_name)
+	const newUser = {
+		user_name,
+		first_name,
+		last_name,
+		date_created: "now()",
+	};
+
+	AuthService.getShelterByUsername(req.app.get("db"), shelter_username)
+		.then((shelter) => {
+			if (!shelter) {
+				return res.status(404).json({ error: `Shelter does not exist` });
+			}
+
+			newUser.shelter_id = shelter.id;
+
+			return UsersService.hasUserWithUserName(req.app.get("db"), user_name);
+		})
 		.then((user) => {
-			if (user)
+			if (user) {
 				return res.status(400).json({ error: `Username is already taken.` });
+			}
 
 			return UsersService.hashPassword(password).then((hashedPassword) => {
-				const newUser = {
-					user_name,
-					password: hashedPassword,
-					first_name,
-					last_name,
-					date_created: "now()",
-				};
+				newUser.password = hashedPassword;
 
 				return UsersService.insertNewUser(req.app.get("db"), newUser)
 					.then((user) => {
@@ -48,6 +71,7 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
 					.then((serializedUser) => {
 						const sub = serializedUser.user_name;
 						const payload = { user_id: serializedUser.id };
+
 						res.status(201).send({
 							user: serializedUser,
 							authToken: AuthService.createJwt(sub, payload),
