@@ -3,7 +3,7 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const supertest = require("supertest");
 
-describe("Dogs Endpoints", function () {
+describe.only("Dogs Endpoints", function () {
 	let db;
 
 	const dogs = helpers.makeDogsArray();
@@ -12,6 +12,7 @@ describe("Dogs Endpoints", function () {
 	const testDog = dogs[0];
 	const notes = helpers.makeNotesArray();
 	const shots = helpers.makeShotsArray();
+	const testShelter = helpers.makeShelter();
 
 	before("make knex instance", () => {
 		db = knex({
@@ -32,12 +33,17 @@ describe("Dogs Endpoints", function () {
 	describe(`GET /api/v1/dogs`, () => {
 		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
-				helpers.seedUsers(db, testUsers);
+				return db
+					.into("shelter")
+					.insert(testShelter)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					});
 			});
 
 			it(`responds with 200 and an empty list`, () => {
 				return supertest(app)
-					.get("/api/v1/dogs")
+					.get("/api/v1/dogs?shelterId=1")
 					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(200, []);
 			});
@@ -46,8 +52,11 @@ describe("Dogs Endpoints", function () {
 		context(`Given there is data in the tables`, () => {
 			beforeEach("Insert data into tables", () => {
 				return db
-					.into("dogs")
-					.insert(dogs)
+					.into("shelter")
+					.insert(testShelter)
+					.then((res) => {
+						return db.into("dogs").insert(dogs);
+					})
 					.then((res) => {
 						return db.into("users").insert(testUsers);
 					})
@@ -61,7 +70,7 @@ describe("Dogs Endpoints", function () {
 
 			it(`responds with 200 and a list of dogs pictures, names and image URLs`, () => {
 				return supertest(app)
-					.get("/api/v1/dogs")
+					.get("/api/v1/dogs?shelterId=1")
 					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(200);
 			});
@@ -328,45 +337,6 @@ describe("Dogs Endpoints", function () {
 							.set("Authorization", helpers.makeAuthHeader(testUser))
 							.expect(expectedDogs);
 					});
-			});
-		});
-	});
-
-	describe(`PATCH 'api/v1/dogs/:dogId/adopt`, () => {
-		context(`given there is data in the tables`, () => {
-			beforeEach("Insert data into tables", () => {
-				return db
-					.into("dogs")
-					.insert(dogs)
-					.then((res) => {
-						return db.into("users").insert(testUsers);
-					})
-					.then((res) => {
-						return db.into("shots").insert(shots);
-					})
-					.then((res) => {
-						return db.into("notes").insert(notes);
-					});
-			});
-
-			it(`responds with 400 'Can't update dog.' if :dogId doesn't exist`, () => {
-				const dogId = 0;
-				const testDate = { adoption_date: new Date().toISOString() };
-				return supertest(app)
-					.patch(`/api/v1/dogs/${dogId}/adopt`)
-					.set("Authorization", helpers.makeAuthHeader(testUser))
-					.send(testDate)
-					.expect(400, { error: `Can't update dog status.` });
-			});
-
-			it(`responds with 200 'Dog status updated' if dogId exists`, () => {
-				const dogId = 1;
-				const testDate = { adoption_date: new Date().toISOString() };
-				return supertest(app)
-					.patch(`/api/v1/dogs/${dogId}/adopt`)
-					.set("Authorization", helpers.makeAuthHeader(testUser))
-					.send(testDate)
-					.expect(200, { message: `Updated dog status.` });
 			});
 		});
 	});
