@@ -24,8 +24,8 @@ const makeDogsArray = () => {
 			spayedneutered: true,
 			updated_by: "Melanie",
 			dog_status: "Current",
-			adoption_date: null,
 			archive_date: null,
+			shelter_id: 1,
 		},
 		{
 			id: 2,
@@ -39,8 +39,8 @@ const makeDogsArray = () => {
 			spayedneutered: false,
 			updated_by: "Sarah",
 			dog_status: "Current",
-			adoption_date: null,
 			archive_date: null,
+			shelter_id: 1,
 		},
 		{
 			id: 3,
@@ -54,8 +54,8 @@ const makeDogsArray = () => {
 			spayedneutered: true,
 			updated_by: "Sarah",
 			dog_status: "Adopted",
-			adoption_date: null,
 			archive_date: null,
+			shelter_id: 1,
 		},
 	];
 };
@@ -249,7 +249,6 @@ const makeExpectedNormalizedData = () => {
 			updated_by: "Melanie",
 			microchip: null,
 			tag_number: null,
-			adoption_date: null,
 			archive_date: null,
 			dog_status: "Current",
 			shotsCompleted: [

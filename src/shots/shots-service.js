@@ -21,6 +21,9 @@ const ShotsService = {
 	deleteShotsByDogId(db, dogId) {
 		return db.from("shots").where("dog_id", dogId).delete();
 	},
+	getShotsNameList(db) {
+		return db.from("shots").distinct("shot_name");
+	},
 };
 
 module.exports = ShotsService;

@@ -163,6 +163,7 @@ dogsRouter
 			gender,
 			spayedneutered,
 			arrival_date,
+			dog_status,
 		} = req.body;
 
 		const dogToUpdate = {
@@ -173,15 +174,16 @@ dogsRouter
 			gender,
 			spayedneutered,
 			arrival_date,
+			dog_status,
 		};
 
-		const requiredFields = { dog_name };
+		console.log(dogToUpdate);
 
-		for (const [key, value] of Object.entries(requiredFields))
-			if (value == null || value == undefined)
-				return res.status(400).json({
-					error: `Missing '${key}' in request body`,
-				});
+		// for (const [key, value] of Object.entries(requiredFields))
+		// 	if (value == null || value == undefined)
+		// 		return res.status(400).json({
+		// 			error: `Missing '${key}' in request body`,
+		// 		});
 
 		DogsService.getDogByDogId(req.app.get("db"), req.params.dogId)
 			.then((dog) => {

@@ -8,6 +8,16 @@ const jsonBodyParser = express.json();
 shotsRouter
 	.route("/")
 	.all(requireAuth)
+	.get((req, res, next) => {
+		ShotsService.getShotsNameList(req.app.get("db"))
+			.then((response) => {
+				if (response.length === 0) {
+					return res.status(404).send({ error: `Can't find shots.` });
+				}
+				res.status(200).json(response);
+			})
+			.catch(next);
+	})
 	.post(jsonBodyParser, (req, res, next) => {
 		const { shot_name, shot_iscompleted, dog_id, shot_date } = req.body;
 

@@ -8,7 +8,6 @@ describe("Shelter Endpoints", function () {
 	let db;
 
 	const testShelter = helpers.makeShelter();
-	// const testUser = testUsers[1];
 
 	before("make knex instance", () => {
 		db = knex({
@@ -26,9 +25,10 @@ describe("Shelter Endpoints", function () {
 
 	describe("POST /api/v1/shelter", () => {
 		context("Validate shelter that doesn't exist in the database", () => {
-			beforeEach("insert shelter", () =>
-				helpers.seedShelterTable(db, testShelter)
-			);
+			beforeEach("insert shelter", () => {
+				helpers.seedShelterTable(db, testShelter);
+				helpers.seedShelterTable(db);
+			});
 			const requiredFields = [
 				"shelter_name",
 				"shelter_username",

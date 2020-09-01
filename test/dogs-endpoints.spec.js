@@ -3,7 +3,7 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const supertest = require("supertest");
 
-describe.only("Dogs Endpoints", function () {
+describe("Dogs Endpoints", function () {
 	let db;
 
 	const dogs = helpers.makeDogsArray();
