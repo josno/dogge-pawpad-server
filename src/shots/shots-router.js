@@ -94,12 +94,29 @@ shotsRouter
 					error: `Missing '${key}' in request body`,
 				});
 
-		ShotsService.updateShotByDogId(
-			req.app.get("db"),
-			req.params.dogId,
-			shot_name,
-			shot_date
-		)
+		ShotsService.getDogShotsbyDogId(req.app.get("db"), req.params.dogId)
+			.then((response) => {
+				const matchingShot = response.some(
+					(item) => item.shot_name === shot_name
+				);
+
+				if (!matchingShot) {
+					const newShot = {
+						dog_id: req.params.dogId,
+						shot_name,
+						shot_date,
+						shot_iscompleted: true,
+					};
+					return ShotsService.insertDogShot(req.app.get("db"), newShot);
+				} else {
+					return ShotsService.updateShotByDogId(
+						req.app.get("db"),
+						req.params.dogId,
+						shot_name,
+						shot_date
+					);
+				}
+			})
 			.then((updatedShot) => {
 				if (!updatedShot || updatedShot.length === 0) {
 					return res.status(404).json({ error: `Can't find shot.` });

@@ -4,7 +4,7 @@ const helpers = require("./test-helpers");
 const supertest = require("supertest");
 const { expect } = require("chai");
 
-describe.only("Shots Endpoints", function () {
+describe("Shots Endpoints", function () {
 	let db;
 
 	const dogs = helpers.makeDogsArray();
@@ -335,6 +335,19 @@ describe.only("Shots Endpoints", function () {
 							error: `Missing '${field}' in request body`,
 						});
 				});
+			});
+
+			it.only(`adds a shot if there is no shot by the shot name`, () => {
+				const dogId = testDog.id;
+				const newNameShotObj = {
+					shot_name: "NewShot",
+					shot_date: new Date(),
+				};
+				return supertest(app)
+					.patch(`/api/v1/shots/dogs/${dogId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(newNameShotObj)
+					.expect(204);
 			});
 
 			it(`updates the shot with new information`, () => {
