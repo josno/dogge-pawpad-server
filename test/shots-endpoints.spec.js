@@ -178,7 +178,7 @@ describe("Shots Endpoints", function () {
 	});
 
 	describe(`DELETE /api/v1/shots/:shotId`, () => {
-		context("Given there are no games", () => {
+		context("Given there are no shots", () => {
 			beforeEach("insert users", () => {
 				return db.into("users").insert(testUsers);
 			});
