@@ -24,8 +24,8 @@ const makeDogsArray = () => {
 			spayedneutered: true,
 			updated_by: "Melanie",
 			dog_status: "Current",
-			adoption_date: null,
 			archive_date: null,
+			shelter_id: 1,
 		},
 		{
 			id: 2,
@@ -39,8 +39,8 @@ const makeDogsArray = () => {
 			spayedneutered: false,
 			updated_by: "Sarah",
 			dog_status: "Current",
-			adoption_date: null,
 			archive_date: null,
+			shelter_id: 1,
 		},
 		{
 			id: 3,
@@ -54,8 +54,8 @@ const makeDogsArray = () => {
 			spayedneutered: true,
 			updated_by: "Sarah",
 			dog_status: "Adopted",
-			adoption_date: null,
 			archive_date: null,
+			shelter_id: 1,
 		},
 	];
 };
@@ -137,6 +137,13 @@ const makeShotToUpdate = () => {
 		shot_iscompleted: false, //change from true
 		dog_id: 1,
 		shot_date: "2020-01-19 14:23:00",
+	};
+};
+
+const makeShotUpdateByDogId = () => {
+	return {
+		shot_date: "2020-08-24T13:00:00",
+		shot_name: "Rabies",
 	};
 };
 
@@ -249,7 +256,6 @@ const makeExpectedNormalizedData = () => {
 			updated_by: "Melanie",
 			microchip: null,
 			tag_number: null,
-			adoption_date: null,
 			archive_date: null,
 			dog_status: "Current",
 			shotsCompleted: [
@@ -469,4 +475,5 @@ module.exports = {
 	makeAdoptionArray,
 	makeShelter,
 	seedShelterTable,
+	makeShotUpdateByDogId,
 };

@@ -1,55 +1,59 @@
-const knex = require('knex');
-const app = require('../src/app');
-const helpers = require('./test-helpers');
-const supertest = require('supertest');
+const knex = require("knex");
+const app = require("../src/app");
+const helpers = require("./test-helpers");
+const supertest = require("supertest");
+const { expect } = require("chai");
 
-describe('Shots Endpoints', function() {
+describe("Shots Endpoints", function () {
 	let db;
 
 	const dogs = helpers.makeDogsArray();
-	const notes = helpers.makeNotesArray();
-	const shots = helpers.makeShotsArray();
 	const testUsers = helpers.makeUsersArray();
 	const testUser = testUsers[0];
+	const testDog = dogs[0];
+	const notes = helpers.makeNotesArray();
+	const shots = helpers.makeShotsArray();
+	const testShelter = helpers.makeShelter();
+	const exampleShotToUpdateById = helpers.makeShotUpdateByDogId();
 
-	before('make knex instance', () => {
+	before("make knex instance", () => {
 		db = knex({
-			client: 'pg',
-			connection: process.env.TEST_DATABASE_URL
+			client: "pg",
+			connection: process.env.TEST_DATABASE_URL,
 		});
-		app.set('db', db);
+		app.set("db", db);
 	});
 
-	after('disconnect from db', () => db.destroy());
+	after("disconnect from db", () => db.destroy());
 
-	before('clear tables', () => helpers.clearTables(db));
+	before("clear tables", () => helpers.clearTables(db));
 
-	afterEach('clear tables', () => helpers.clearTables(db));
+	afterEach("clear tables", () => helpers.clearTables(db));
 
 	describe(`POST /api/v1/shots`, () => {
 		context(`given there is data in the tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('dogs')
+					.into("dogs")
 					.insert(dogs)
-					.then(res => {
-						return db.into('users').insert(testUsers);
+					.then((res) => {
+						return db.into("users").insert(testUsers);
 					})
-					.then(res => {
-						return db.into('shots').insert(shots);
+					.then((res) => {
+						return db.into("shots").insert(shots);
 					})
-					.then(res => {
-						return db.into('notes').insert(notes);
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
 
-			const requiredFields = ['shot_name', 'shot_iscompleted', 'dog_id'];
+			const requiredFields = ["shot_name", "shot_iscompleted", "dog_id"];
 
-			requiredFields.forEach(field => {
+			requiredFields.forEach((field) => {
 				const dogAttemptBody = {
-					shot_name: 'Test',
+					shot_name: "Test",
 					shot_iscompleted: false,
-					dog_id: 1
+					dog_id: 1,
 				};
 
 				it(`responds with 400 required error when '${field}' is missing`, () => {
@@ -57,10 +61,10 @@ describe('Shots Endpoints', function() {
 
 					return supertest(app)
 						.post(`/api/v1/shots`)
-						.set('Authorization', helpers.makeAuthHeader(testUser))
+						.set("Authorization", helpers.makeAuthHeader(testUser))
 						.send(dogAttemptBody)
 						.expect(400, {
-							error: `Missing '${field}' in request body`
+							error: `Missing '${field}' in request body`,
 						});
 				});
 			});
@@ -69,27 +73,27 @@ describe('Shots Endpoints', function() {
 				const newShots = helpers.makeShotToInsert();
 				return supertest(app)
 					.post(`/api/v1/shots`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.send(newShots)
 					.expect(201);
 			});
 		});
 	});
 
-	describe(`GET /api/v1/shots/:dogId`, () => {
+	describe(`GET /api/v1/shots/dogs/:dogId`, () => {
 		context(`given there is data in the tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('dogs')
+					.into("dogs")
 					.insert(dogs)
-					.then(res => {
-						return db.into('users').insert(testUsers);
+					.then((res) => {
+						return db.into("users").insert(testUsers);
 					})
-					.then(res => {
-						return db.into('shots').insert(shots);
+					.then((res) => {
+						return db.into("shots").insert(shots);
 					})
-					.then(res => {
-						return db.into('notes').insert(notes);
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
 
@@ -99,16 +103,16 @@ describe('Shots Endpoints', function() {
 				const expectedShots = helpers.makeExpectedShots();
 
 				return supertest(app)
-					.get(`/api/v1/shots/${dogId}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.get(`/api/v1/shots/dogs/${dogId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(200, expectedShots);
 			});
 
 			it(`responds with 404 error message when dogId doesn't exist`, () => {
 				const dogId = 897;
 				return supertest(app)
-					.get(`/api/v1/shots/${dogId}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.get(`/api/v1/shots/dogs/${dogId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(404, { error: `Can't find dog.` });
 			});
 		});
@@ -116,27 +120,27 @@ describe('Shots Endpoints', function() {
 
 	describe(`PATCH /api/v1/shots/:shotId`, () => {
 		context(`given there is data in the tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('dogs')
+					.into("dogs")
 					.insert(dogs)
-					.then(res => {
-						return db.into('users').insert(testUsers);
+					.then((res) => {
+						return db.into("users").insert(testUsers);
 					})
-					.then(res => {
-						return db.into('shots').insert(shots);
+					.then((res) => {
+						return db.into("shots").insert(shots);
 					})
-					.then(res => {
-						return db.into('notes').insert(notes);
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
 
-			const requiredFields = ['shot_name', 'shot_iscompleted'];
+			const requiredFields = ["shot_name", "shot_iscompleted"];
 
-			requiredFields.forEach(field => {
+			requiredFields.forEach((field) => {
 				const dogAttemptBody = {
-					shot_name: 'Updated Shot Name',
-					shot_iscompleted: false
+					shot_name: "Updated Shot Name",
+					shot_iscompleted: false,
 				};
 
 				it(`responds with 400 required error when '${field}' is missing`, () => {
@@ -144,10 +148,10 @@ describe('Shots Endpoints', function() {
 					const dogId = 1;
 					return supertest(app)
 						.patch(`/api/v1/shots/${dogId}`)
-						.set('Authorization', helpers.makeAuthHeader(testUser))
+						.set("Authorization", helpers.makeAuthHeader(testUser))
 						.send(dogAttemptBody)
 						.expect(400, {
-							error: `Missing '${field}' in request body`
+							error: `Missing '${field}' in request body`,
 						});
 				});
 			});
@@ -157,7 +161,7 @@ describe('Shots Endpoints', function() {
 				shotToUpdate.id = 897;
 				return supertest(app)
 					.patch(`/api/v1/shots/${shotToUpdate.id}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.send(shotToUpdate)
 					.expect(404, { error: `Can't find shot.` });
 			});
@@ -168,7 +172,7 @@ describe('Shots Endpoints', function() {
 
 				return supertest(app)
 					.patch(`/api/v1/shots/${shotToUpdate.id}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.send(shotToUpdate)
 					.expect(204);
 			});
@@ -176,33 +180,33 @@ describe('Shots Endpoints', function() {
 	});
 
 	describe(`DELETE /api/v1/shots/:shotId`, () => {
-		context('Given there are no games', () => {
-			beforeEach('insert users', () => {
-				return db.into('users').insert(testUsers);
+		context("Given there are no shots", () => {
+			beforeEach("insert users", () => {
+				return db.into("users").insert(testUsers);
 			});
 
 			it(`responds with 404 'Can't find shot.' if there are no shots that match the database`, () => {
 				const shotId = 0;
 				return supertest(app)
 					.delete(`/api/v1/shots/${shotId}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(404, { error: `Can't find shot.` });
 			});
 		});
 
 		context(`given there is data in the tables`, () => {
-			beforeEach('Insert data into tables', () => {
+			beforeEach("Insert data into tables", () => {
 				return db
-					.into('dogs')
+					.into("dogs")
 					.insert(dogs)
-					.then(res => {
-						return db.into('users').insert(testUsers);
+					.then((res) => {
+						return db.into("users").insert(testUsers);
 					})
-					.then(res => {
-						return db.into('shots').insert(shots);
+					.then((res) => {
+						return db.into("shots").insert(shots);
 					})
-					.then(res => {
-						return db.into('notes').insert(notes);
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
 
@@ -210,19 +214,166 @@ describe('Shots Endpoints', function() {
 				const shotId = 1;
 				const dogId = 1;
 				const shots = helpers.makeExpectedShots();
-				const expectedShots = shots.filter(i => i.id != shotId);
+				const expectedShots = shots.filter((i) => i.id != shotId);
 				return supertest(app)
 					.delete(`/api/v1/shots/${shotId}`)
-					.set('Authorization', helpers.makeAuthHeader(testUser))
+					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(204)
-					.then(res => {
+					.then((res) => {
 						supertest(app)
 							.get(`/api/v1/shots/${dogId}`)
-							.set(
-								'Authorization',
-								helpers.makeAuthHeader(testUser)
-							)
+							.set("Authorization", helpers.makeAuthHeader(testUser))
 							.expect(expectedShots);
+					});
+			});
+		});
+	});
+
+	describe(`GET /api/v1/shots/shotnames`, () => {
+		context("Given there are no shots", () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("shelter")
+					.insert(testShelter)
+					.then((res) => {
+						return db.into("dogs").insert(dogs);
+					})
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					});
+			});
+
+			it(`responds with 404 'Can't find shots.' if there are no shots that match the database`, () => {
+				return supertest(app)
+					.get(`/api/v1/shots`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.expect(404, { error: `Can't find shots.` });
+			});
+		});
+
+		context("Given there are shots in databse", () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("shelter")
+					.insert(testShelter)
+					.then((res) => {
+						return db.into("dogs").insert(dogs);
+					})
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("shots").insert(shots);
+					});
+			});
+
+			it(`responds with 200 with list of shots`, () => {
+				return supertest(app)
+					.get(`/api/v1/shots`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.expect(200);
+			});
+		});
+	});
+
+	describe(`PATCH /api/v1/shots/dogs/:dogId`, () => {
+		context("Given there are no shots", () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("shelter")
+					.insert(testShelter)
+					.then((res) => {
+						return db.into("dogs").insert(dogs);
+					})
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					});
+			});
+
+			it(`responds with 404 'Can't find shot.' if there are no shot that match the database`, () => {
+				const dogId = testDog.id;
+				return supertest(app)
+					.patch(`/api/v1/shots/dogs/${dogId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(exampleShotToUpdateById)
+					.expect(404, { error: `Can't find shot.` });
+			});
+		});
+
+		context("Given there are shots in database", () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("shelter")
+					.insert(testShelter)
+					.then((res) => {
+						return db.into("dogs").insert(dogs);
+					})
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("shots").insert(shots);
+					});
+			});
+
+			const requiredFields = ["shot_name", "shot_date"];
+
+			requiredFields.forEach((field) => {
+				const dogAttemptBody = {
+					shot_name: "Updated Shot Name",
+					shot_date: new Date(),
+				};
+
+				it(`responds with 400 required error when '${field}' is missing`, () => {
+					delete dogAttemptBody[field]; //deletes the specified field first; then test
+					const dogId = 1;
+					return supertest(app)
+						.patch(`/api/v1/shots/dogs/${dogId}`)
+						.set("Authorization", helpers.makeAuthHeader(testUser))
+						.send(dogAttemptBody)
+						.expect(400, {
+							error: `Missing '${field}' in request body`,
+						});
+				});
+			});
+
+			it.only(`adds a shot if there is no shot by the shot name`, () => {
+				const dogId = testDog.id;
+				const newNameShotObj = {
+					shot_name: "NewShot",
+					shot_date: new Date(),
+				};
+				return supertest(app)
+					.patch(`/api/v1/shots/dogs/${dogId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(newNameShotObj)
+					.expect(204);
+			});
+
+			it(`updates the shot with new information`, () => {
+				const dogId = testDog.id;
+				return supertest(app)
+					.patch(`/api/v1/shots/dogs/${dogId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(exampleShotToUpdateById)
+					.expect(204)
+					.then((response) => {
+						return supertest(app)
+							.get(`/api/v1/shots/dogs/${dogId}`)
+							.set("Authorization", helpers.makeAuthHeader(testUser))
+							.expect(200);
+					})
+					.then((res) => {
+						const updatedShot = res.body.find(
+							(shot) => shot.shot_name === exampleShotToUpdateById.shot_name
+						);
+						expect(updatedShot.shot_name).to.eql(
+							exampleShotToUpdateById.shot_name
+						);
+						expect(updatedShot.shot_date).to.include(
+							exampleShotToUpdateById.shot_date
+						);
+						expect(updatedShot.shot_iscompleted).to.eql(true);
 					});
 			});
 		});

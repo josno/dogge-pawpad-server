@@ -43,7 +43,6 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
 		user_name,
 		first_name,
 		last_name,
-		date_created: "now()",
 	};
 
 	AuthService.getShelterByUsername(req.app.get("db"), shelter_username)

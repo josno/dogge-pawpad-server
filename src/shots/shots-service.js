@@ -5,6 +5,12 @@ const ShotsService = {
 	updateDogShotByShotId(db, id, shot) {
 		return db.from("shots").where("id", id).update(shot);
 	},
+	updateShotByDogId(db, dogId, shotName, date) {
+		return db
+			.from("shots")
+			.where({ dog_id: dogId, shot_name: shotName })
+			.update({ shot_iscompleted: true, shot_date: date });
+	},
 	insertDogShot(db, newShot) {
 		return db
 			.insert(newShot)
@@ -20,6 +26,9 @@ const ShotsService = {
 	},
 	deleteShotsByDogId(db, dogId) {
 		return db.from("shots").where("dog_id", dogId).delete();
+	},
+	getShotsNameList(db) {
+		return db.from("shots").distinct("shot_name");
 	},
 };
 
