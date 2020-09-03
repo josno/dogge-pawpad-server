@@ -78,7 +78,6 @@ shotsRouter
 			.catch(next);
 	})
 	.patch(jsonBodyParser, (req, res, next) => {
-		console.log(req.params.dogId);
 		const { shot_name, shot_date } = req.body;
 
 		if (!req.params.dogId) {
@@ -97,7 +96,7 @@ shotsRouter
 
 		ShotsService.updateShotByDogId(
 			req.app.get("db"),
-			dogId,
+			req.params.dogId,
 			shot_name,
 			shot_date
 		)

@@ -8,8 +8,8 @@ const ShotsService = {
 	updateShotByDogId(db, dogId, shotName, date) {
 		return db
 			.from("shots")
-			.where({ dog_id: dogId })
-			.update({ shot_name: shotName, shot_iscompleted: true, shot_date: date });
+			.where({ dog_id: dogId, shot_name: shotName })
+			.update({ shot_iscompleted: true, shot_date: date });
 	},
 	insertDogShot(db, newShot) {
 		return db
