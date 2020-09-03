@@ -65,7 +65,7 @@ shotsRouter
 	});
 
 shotsRouter
-	.route("/:dogId") // get shots for one specific dog
+	.route("/dogs/:dogId") // get shots for one specific dog
 	.all(requireAuth)
 	.get((req, res, next) => {
 		ShotsService.getDogShotsbyDogId(req.app.get("db"), req.params.dogId)

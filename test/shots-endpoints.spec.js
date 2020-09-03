@@ -4,7 +4,7 @@ const helpers = require("./test-helpers");
 const supertest = require("supertest");
 const { expect } = require("chai");
 
-describe("Shots Endpoints", function () {
+describe.only("Shots Endpoints", function () {
 	let db;
 
 	const dogs = helpers.makeDogsArray();
@@ -80,7 +80,7 @@ describe("Shots Endpoints", function () {
 		});
 	});
 
-	describe(`GET /api/v1/shots/:dogId`, () => {
+	describe(`GET /api/v1/shots/dogs/:dogId`, () => {
 		context(`given there is data in the tables`, () => {
 			beforeEach("Insert data into tables", () => {
 				return db
@@ -103,7 +103,7 @@ describe("Shots Endpoints", function () {
 				const expectedShots = helpers.makeExpectedShots();
 
 				return supertest(app)
-					.get(`/api/v1/shots/${dogId}`)
+					.get(`/api/v1/shots/dogs/${dogId}`)
 					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(200, expectedShots);
 			});
@@ -111,7 +111,7 @@ describe("Shots Endpoints", function () {
 			it(`responds with 404 error message when dogId doesn't exist`, () => {
 				const dogId = 897;
 				return supertest(app)
-					.get(`/api/v1/shots/${dogId}`)
+					.get(`/api/v1/shots/dogs/${dogId}`)
 					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(404, { error: `Can't find dog.` });
 			});
@@ -276,7 +276,7 @@ describe("Shots Endpoints", function () {
 		});
 	});
 
-	describe(`PATCH /api/v1/shots/:dogId`, () => {
+	describe(`PATCH /api/v1/shots/dogs/:dogId`, () => {
 		context("Given there are no shots", () => {
 			beforeEach("Insert data into tables", () => {
 				return db
@@ -293,7 +293,7 @@ describe("Shots Endpoints", function () {
 			it(`responds with 404 'Can't find shot.' if there are no shot that match the database`, () => {
 				const dogId = testDog.id;
 				return supertest(app)
-					.patch(`/api/v1/shots/${dogId}`)
+					.patch(`/api/v1/shots/dogs/${dogId}`)
 					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.send(exampleShotToUpdateById)
 					.expect(404, { error: `Can't find shot.` });
@@ -328,7 +328,7 @@ describe("Shots Endpoints", function () {
 					delete dogAttemptBody[field]; //deletes the specified field first; then test
 					const dogId = 1;
 					return supertest(app)
-						.patch(`/api/v1/shots/${dogId}`)
+						.patch(`/api/v1/shots/dogs/${dogId}`)
 						.set("Authorization", helpers.makeAuthHeader(testUser))
 						.send(dogAttemptBody)
 						.expect(400, {
@@ -340,13 +340,13 @@ describe("Shots Endpoints", function () {
 			it(`updates the shot with new information`, () => {
 				const dogId = testDog.id;
 				return supertest(app)
-					.patch(`/api/v1/shots/${dogId}`)
+					.patch(`/api/v1/shots/dogs/${dogId}`)
 					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.send(exampleShotToUpdateById)
 					.expect(204)
 					.then((response) => {
 						return supertest(app)
-							.get(`/api/v1/shots/${dogId}`)
+							.get(`/api/v1/shots/dogs/${dogId}`)
 							.set("Authorization", helpers.makeAuthHeader(testUser))
 							.expect(200);
 					})
