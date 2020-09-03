@@ -76,6 +76,38 @@ shotsRouter
 				res.status(200).json(response);
 			})
 			.catch(next);
+	})
+	.patch(jsonBodyParser, (req, res, next) => {
+		const { dogId } = req.params;
+		const { shot_name, shot_date } = req.body;
+
+		if (req.params.dogId) {
+			return res.status(400).json({
+				error: "Missing dog id.",
+			});
+		}
+
+		const requiredFields = { shot_name, shot_date };
+
+		for (const [key, value] of Object.entries(requiredFields))
+			if (value == null || value == undefined)
+				return res.status(400).json({
+					error: `Missing '${key}' in request body`,
+				});
+
+		ShotsService.updateShotByDogId(
+			req.app.get("db"),
+			dogId,
+			shot_name,
+			shot_date
+		)
+			.then((updatedShot) => {
+				if (!updatedShot || updatedShot.length === 0) {
+					return res.status(404).json({ error: `Can't find shot.` });
+				}
+				res.status(204).end();
+			})
+			.catch(next);
 	});
 
 shotsRouter

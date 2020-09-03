@@ -5,6 +5,12 @@ const ShotsService = {
 	updateDogShotByShotId(db, id, shot) {
 		return db.from("shots").where("id", id).update(shot);
 	},
+	updateShotByDogId(db, dogId, shotName, date) {
+		return db
+			.from("shots")
+			.where({ dog_id: dogId })
+			.update({ shot_name: shotName, shot_iscompleted: true, shot_date: date });
+	},
 	insertDogShot(db, newShot) {
 		return db
 			.insert(newShot)

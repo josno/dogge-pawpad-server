@@ -140,6 +140,13 @@ const makeShotToUpdate = () => {
 	};
 };
 
+const makeShotUpdateByDogId = () => {
+	return {
+		shot_date: "2020-08-24T13:00:00",
+		shot_name: "Rabies",
+	};
+};
+
 const makeBadShotToUpdate = () => {
 	return {
 		shot_name: "Rabies",
@@ -468,4 +475,5 @@ module.exports = {
 	makeAdoptionArray,
 	makeShelter,
 	seedShelterTable,
+	makeShotUpdateByDogId,
 };

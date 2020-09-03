@@ -2,6 +2,7 @@ const knex = require("knex");
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 const supertest = require("supertest");
+const { expect } = require("chai");
 
 describe("Shots Endpoints", function () {
 	let db;
@@ -13,6 +14,7 @@ describe("Shots Endpoints", function () {
 	const notes = helpers.makeNotesArray();
 	const shots = helpers.makeShotsArray();
 	const testShelter = helpers.makeShelter();
+	const exampleShotToUpdateById = helpers.makeShotUpdateByDogId();
 
 	before("make knex instance", () => {
 		db = knex({
@@ -270,6 +272,106 @@ describe("Shots Endpoints", function () {
 					.get(`/api/v1/shots`)
 					.set("Authorization", helpers.makeAuthHeader(testUser))
 					.expect(200);
+			});
+		});
+	});
+
+	describe(`PATCH /api/v1/shots/:dogId`, () => {
+		context("Given there are no shots", () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("shelter")
+					.insert(testShelter)
+					.then((res) => {
+						return db.into("dogs").insert(dogs);
+					})
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					});
+			});
+
+			it(`responds with 404 'Can't find shot.' if there are no shot that match the database`, () => {
+				const dogId = testDog.id;
+				return supertest(app)
+					.patch(`/api/v1/shots/${dogId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(exampleShotToUpdateById)
+					.expect(404, { error: `Can't find shot.` });
+			});
+		});
+
+		context("Given there are shots in database", () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("shelter")
+					.insert(testShelter)
+					.then((res) => {
+						return db.into("dogs").insert(dogs);
+					})
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("shots").insert(shots);
+					});
+			});
+
+			const requiredFields = ["shot_name", "shot_date"];
+
+			requiredFields.forEach((field) => {
+				const dogAttemptBody = {
+					shot_name: "Updated Shot Name",
+					shot_date: new Date(),
+				};
+
+				it(`responds with 400 required error when '${field}' is missing`, () => {
+					delete dogAttemptBody[field]; //deletes the specified field first; then test
+					const dogId = 1;
+					return supertest(app)
+						.patch(`/api/v1/shots/${dogId}`)
+						.set("Authorization", helpers.makeAuthHeader(testUser))
+						.send(dogAttemptBody)
+						.expect(400, {
+							error: `Missing '${field}' in request body`,
+						});
+				});
+			});
+
+			it(`responds with 400 missing dogId when dogId is missing or doesn't match`, () => {
+				return supertest(app)
+					.patch(`/api/v1/shots/0`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(exampleShotToUpdateById)
+					.expect(400, {
+						error: `Missing dog id.`,
+					});
+			});
+
+			it(`updates the shot with new information`, () => {
+				const dogId = testDog.id;
+				return supertest(app)
+					.patch(`/api/v1/shots/${dogId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUser))
+					.send(exampleShotToUpdateById)
+					.expect(204)
+					.then((response) => {
+						return supertest(app)
+							.get(`/api/v1/shots/${dogId}`)
+							.set("Authorization", helpers.makeAuthHeader(testUser))
+							.expect(200);
+					})
+					.then((res) => {
+						const updatedShot = res.body.find(
+							(shot) => shot.shot_name === exampleShotToUpdateById.shot_name
+						);
+						expect(updatedShot.shot_name).to.eql(
+							exampleShotToUpdateById.shot_name
+						);
+						expect(updatedShot.shot_date).to.include(
+							exampleShotToUpdateById.shot_date
+						);
+						expect(updatedShot.shot_iscompleted).to.eql(true);
+					});
 			});
 		});
 	});
