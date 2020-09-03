@@ -337,16 +337,6 @@ describe("Shots Endpoints", function () {
 				});
 			});
 
-			it(`responds with 400 missing dogId when dogId is missing or doesn't match`, () => {
-				return supertest(app)
-					.patch(`/api/v1/shots/0`)
-					.set("Authorization", helpers.makeAuthHeader(testUser))
-					.send(exampleShotToUpdateById)
-					.expect(400, {
-						error: `Missing dog id.`,
-					});
-			});
-
 			it(`updates the shot with new information`, () => {
 				const dogId = testDog.id;
 				return supertest(app)

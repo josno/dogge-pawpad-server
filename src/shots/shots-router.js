@@ -78,10 +78,10 @@ shotsRouter
 			.catch(next);
 	})
 	.patch(jsonBodyParser, (req, res, next) => {
-		const { dogId } = req.params;
+		console.log(req.params.dogId);
 		const { shot_name, shot_date } = req.body;
 
-		if (req.params.dogId) {
+		if (!req.params.dogId) {
 			return res.status(400).json({
 				error: "Missing dog id.",
 			});
