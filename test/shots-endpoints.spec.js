@@ -337,7 +337,7 @@ describe("Shots Endpoints", function () {
 				});
 			});
 
-			it.only(`adds a shot if there is no shot by the shot name`, () => {
+			it(`adds a shot if there is no shot by the shot name`, () => {
 				const dogId = testDog.id;
 				const newNameShotObj = {
 					shot_name: "NewShot",

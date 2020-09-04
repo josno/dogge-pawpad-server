@@ -177,14 +177,6 @@ dogsRouter
 			dog_status,
 		};
 
-		console.log(dogToUpdate);
-
-		// for (const [key, value] of Object.entries(requiredFields))
-		// 	if (value == null || value == undefined)
-		// 		return res.status(400).json({
-		// 			error: `Missing '${key}' in request body`,
-		// 		});
-
 		DogsService.getDogByDogId(req.app.get("db"), req.params.dogId)
 			.then((dog) => {
 				if (!dog) {

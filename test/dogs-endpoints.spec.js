@@ -192,7 +192,7 @@ describe("Dogs Endpoints", function () {
 		});
 	});
 
-	describe(`PATCH api/v1/dogs/:dogId`, () => {
+	describe.only(`PATCH api/v1/dogs/:dogId`, () => {
 		context(`Check against invalid entries with data in tables`, () => {
 			beforeEach("Insert data into tables", () => {
 				return db
@@ -209,36 +209,12 @@ describe("Dogs Endpoints", function () {
 					});
 			});
 
-			const requiredFields = ["dog_name"];
-
-			requiredFields.forEach((field) => {
-				const dogAttemptBody = {
-					dog_name: testDog.dog_name,
-					spayedneutered: testDog.spayedneutered,
-					arrival_date: testDog.arrival_date,
-					gender: testDog.gender,
-					profile_img: testDog.profile_img,
-				};
-
-				it(`responds with 400 required error when '${field}' is missing`, () => {
-					delete dogAttemptBody[field]; //deletes the specified field first; then test
-					const dogId = 1;
-					return supertest(app)
-						.patch(`/api/v1/dogs/${dogId}`)
-						.set("Authorization", helpers.makeAuthHeader(testUser))
-						.send(dogAttemptBody)
-						.expect(400, {
-							error: `Missing '${field}' in request body`,
-						});
-				});
-			});
-
 			it(`responds with 404 can't find error when dogId doesn't exist in database`, () => {
 				const badDogId = 92384;
 				const dogAttemptBody = {
 					dog_name: testDog.dog_name,
 					spayedneutered: testDog.spayedneutered,
-				}; //change attembody
+				};
 				return supertest(app)
 					.patch(`/api/v1/dogs/${badDogId}`)
 					.set("Authorization", helpers.makeAuthHeader(testUser))
