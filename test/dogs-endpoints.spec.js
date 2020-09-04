@@ -192,7 +192,7 @@ describe("Dogs Endpoints", function () {
 		});
 	});
 
-	describe.only(`PATCH api/v1/dogs/:dogId`, () => {
+	describe(`PATCH api/v1/dogs/:dogId`, () => {
 		context(`Check against invalid entries with data in tables`, () => {
 			beforeEach("Insert data into tables", () => {
 				return db

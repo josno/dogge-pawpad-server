@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const CryptoJS = require("crypto-js");
+const { ENCRYPTION_KEY } = require("../src/config");
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
 	const token = jwt.sign({ user_id: user.id }, secret, {
@@ -348,11 +350,21 @@ const makeNewAdoption = () => {
 		dog_id: 1,
 		adoption_date: "2020-05-19T10:23:00.000Z",
 		adopter_name: "Test Adopter",
-		adopter_phone: "111-111-1111",
-		adopter_country: "Poland",
-		adopter_email: "email@email.com",
+		phone: "111-111-1111",
+		country: "Poland",
+		email: "email@email.com",
 		adopter_address: "1 Hershey Way, Poland City, Poland, 21392132",
 	};
+};
+
+const encryptAdoption = (adoption) => {
+	const ciphertext = CryptoJS.AES.encrypt(
+		JSON.stringify(adoption),
+		ENCRYPTION_KEY
+	).toString();
+
+	const encrypted = { data: ciphertext };
+	return encrypted;
 };
 
 const makeShelter = () => {
@@ -476,4 +488,5 @@ module.exports = {
 	makeShelter,
 	seedShelterTable,
 	makeShotUpdateByDogId,
+	encryptAdoption,
 };

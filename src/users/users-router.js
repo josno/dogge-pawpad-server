@@ -62,19 +62,20 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
 
 			return UsersService.hashPassword(password).then((hashedPassword) => {
 				newUser.password = hashedPassword;
-
-				return UsersService.insertNewUser(req.app.get("db"), newUser)
-					.then((user) => {
-						return (serializedUser = UsersService.serializeUser(user));
-					})
-					.then((serializedUser) => {
-						const sub = serializedUser.user_name;
-						const payload = { user_id: serializedUser.id };
-						res.status(201).json({
-							shelterId: serializedUser.shelter_id,
-							authToken: AuthService.createJwt(sub, payload),
-						});
-					});
+			});
+		})
+		.then((res) => {
+			return UsersService.insertNewUser(req.app.get("db"), newUser);
+		})
+		.then((user) => {
+			return (serializedUser = UsersService.serializeUser(user));
+		})
+		.then((serializedUser) => {
+			const sub = serializedUser.user_name;
+			const payload = { user_id: serializedUser.id };
+			return res.status(201).json({
+				shelterId: serializedUser.shelter_id,
+				authToken: AuthService.createJwt(sub, payload),
 			});
 		})
 		.catch(next);
