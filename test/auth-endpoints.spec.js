@@ -34,14 +34,13 @@ describe("Auth Endpoints", function () {
 			});
 	});
 
-	describe(`POST /api/auth/login`, () => {
-		const requiredFields = ["user_name", "password", "shelter_username"];
+	describe.only(`POST /api/auth/login`, () => {
+		const requiredFields = ["user_name", "password"];
 
 		requiredFields.forEach((field) => {
 			const loginAttemptBody = {
 				user_name: testUser.user_name,
 				password: testUser.password,
-				shelter_username: testShelter.shelter_username,
 			};
 
 			it(`responds with 400 required error when '${field}' is missing`, () => {
@@ -60,7 +59,6 @@ describe("Auth Endpoints", function () {
 			const userInvalidUser = {
 				user_name: "user-not",
 				password: testUser.password,
-				shelter_username: testShelter.shelter_username,
 			};
 			return supertest(app)
 				.post("/api/v1/auth/login")
@@ -68,35 +66,10 @@ describe("Auth Endpoints", function () {
 				.expect(400, { error: `Incorrect username or password` });
 		});
 
-		it(`responds 400 'Shelter missing or does not match.' when missing shelter username.`, () => {
-			const userInvalidUser = {
-				user_name: testUser.user_name,
-				password: testUser.password,
-				shelter_username: "",
-			};
-			return supertest(app)
-				.post("/api/v1/auth/login")
-				.send(userInvalidUser)
-				.expect(400, { error: `Shelter missing or does not match.` });
-		});
-
-		it(`responds 400 'Shelter missing or does not match.' with bad shelter username.`, () => {
-			const invalidShelter = {
-				user_name: testUser.user_name,
-				password: testUser.password,
-				shelter_username: "wrong shelter",
-			};
-			return supertest(app)
-				.post("/api/v1/auth/login")
-				.send(invalidShelter)
-				.expect(400, { error: `Shelter missing or does not match.` });
-		});
-
 		it(`responds 400 'invalid user_name or password' when bad password`, () => {
 			const userInvalidPass = {
 				user_name: testUser.user_name,
 				password: "incorrect",
-				shelter_username: testShelter.shelter_username,
 			};
 			return supertest(app)
 				.post("/api/v1/auth/login")
@@ -123,7 +96,7 @@ describe("Auth Endpoints", function () {
 			return supertest(app)
 				.post("/api/v1/auth/login")
 				.send(userValidCreds)
-				.expect(200, { authToken: expectedToken });
+				.expect(200, { authToken: expectedToken, shelterId: 1 });
 		});
 	});
 });
