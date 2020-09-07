@@ -4,7 +4,7 @@ const helpers = require("./test-helpers");
 const supertest = require("supertest");
 const { expect } = require("chai");
 
-describe.only("Shots Endpoints", function () {
+describe("Shots Endpoints", function () {
 	let db;
 
 	const dogs = helpers.makeDogsArray();
