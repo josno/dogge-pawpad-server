@@ -26,9 +26,6 @@ shelterRouter.post("/", jsonBodyParser, (req, res, next) => {
 				error: `Missing '${field}' in request body`,
 			});
 
-	// const usernameError = UsersService.validateUsername(user_name);
-	// if (usernameError) return res.status(400).json({ error: usernameError });
-
 	ShelterService.hasShelterWithUserName(req.app.get("db"), shelter_username)
 		.then((shelter) => {
 			if (shelter)
