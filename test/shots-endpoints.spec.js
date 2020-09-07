@@ -4,7 +4,7 @@ const helpers = require("./test-helpers");
 const supertest = require("supertest");
 const { expect } = require("chai");
 
-describe("Shots Endpoints", function () {
+describe.only("Shots Endpoints", function () {
 	let db;
 
 	const dogs = helpers.makeDogsArray();
@@ -283,14 +283,11 @@ describe("Shots Endpoints", function () {
 					.into("shelter")
 					.insert(testShelter)
 					.then((res) => {
-						return db.into("dogs").insert(dogs);
-					})
-					.then((res) => {
 						return db.into("users").insert(testUsers);
 					});
 			});
 
-			it(`responds with 404 'Can't find shot.' if there are no shot that match the database`, () => {
+			it(`responds with 404 'Can't find shot.' if there is no dog`, () => {
 				const dogId = testDog.id;
 				return supertest(app)
 					.patch(`/api/v1/shots/dogs/${dogId}`)

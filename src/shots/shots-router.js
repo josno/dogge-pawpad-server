@@ -96,10 +96,13 @@ shotsRouter
 
 		ShotsService.getDogShotsbyDogId(req.app.get("db"), req.params.dogId)
 			.then((response) => {
+				if (response.length === 0) {
+					return res.status(404).json({ error: `Can't find shot.` });
+				}
+
 				const matchingShot = response.some(
 					(item) => item.shot_name === shot_name
 				);
-
 				if (!matchingShot) {
 					const newShot = {
 						dog_id: req.params.dogId,
