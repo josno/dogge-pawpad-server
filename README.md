@@ -4,7 +4,7 @@
 
 #### It's RESTful
 
-The back end interface for the PawPad application. Provides dog information such as name, age, gender, shots and images.
+The back end interface for the PawPad application. Provides dog information such as name, age, gender, shots and images. This is a constant work in progress and new endpoints are added as I continue to build up this app (per shelter's requests)
 
 ## Demo The App [Here](https://pawpad.now.sh/)
 
@@ -12,17 +12,17 @@ The back end interface for the PawPad application. Provides dog information such
 
 ## Technology Used
 
--   Server Side Programming:
+- Server Side Programming:
 
-    -   Javascript
-    -   Node
-    -   Express
-    -   Knex
+  - Javascript
+  - Node
+  - Express
+  - Knex
 
-*   Relational Databases:
+* Relational Databases:
 
-    -   SQL
-    -   PostgreSQL
+  - SQL
+  - PostgreSQL
 
 ## How To Use
 
@@ -54,6 +54,14 @@ npm start
 /api/v1/auth/
 ```
 
+#### Shelter Router || Available Methods:
+
+##### POST
+
+```
+/api/v1/shelter
+```
+
 #### Dogs Router || Available Methods:
 
 ##### GET, POST
@@ -62,12 +70,24 @@ npm start
 /api/v1/dogs
 ```
 
-#### Dog Id Router || Available Methods:
-
-##### PATCH
+##### POST
 
 ```
-/api/v1/games/:dogId
+/api/v1/dogs/images
+```
+
+##### DELETE, PUT
+
+```
+/api/v1/dogs/images/:tagNumber
+```
+
+#### Dog Id Router || Available Methods:
+
+##### GET, PATCH, DELETE
+
+```
+/api/v1/dogs/:dogId
 ```
 
 ---
@@ -76,15 +96,25 @@ npm start
 
 #### Shots Router || Available Methods:
 
-##### GET, POST
+##### GET, POST, DELETE
+
+- Update by dog ID
 
 ```
-/api/v1/shots/:dogId
+/api/v1/shots
 ```
 
-#### Shots Router || Available Methods:
+##### GET, PATCH
+
+- Update by dog ID
+
+```
+/api/v1/shots/dogs/:dogId
+```
 
 ##### PATCH, DELETE
+
+- For specific shots
 
 ```
 /api/v1/shots/:shotId
@@ -96,4 +126,24 @@ npm start
 
 ```
 /api/v1/notes/:dogId
+```
+
+#### Adoption Router || Available Methods:
+
+##### POST
+
+```
+/api/v1/adoption
+```
+
+##### GET, DELETE
+
+```
+/api/v1/adoption/:dogId
+```
+
+#### PUT
+
+```
+/api/v1/adoption/contract-upload/:dogId
 ```
