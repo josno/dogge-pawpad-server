@@ -357,6 +357,18 @@ const makeNewAdoption = () => {
 	};
 };
 
+const makeNewFoster = () => {
+	return {
+		dog_id: 1,
+		foster_date: "2020-05-19T10:23:00.000Z",
+		foster_name: "Test Adopter",
+		foster_phone: "111-111-1111",
+		foster_country: "Poland",
+		foster_email: "email@email.com",
+		foster_address: "1 Hershey Way, Poland City, Poland, 21392132",
+	};
+};
+
 const encryptAdoption = (adoption) => {
 	const ciphertext = CryptoJS.AES.encrypt(
 		JSON.stringify(adoption),
@@ -492,4 +504,5 @@ module.exports = {
 	seedShelterTable,
 	makeShotUpdateByDogId,
 	encryptAdoption,
+	makeNewFoster,
 };

@@ -10,6 +10,7 @@ describe("Foster endpoints", () => {
 	const dogs = helpers.makeDogsArray();
 	const shots = helpers.makeShotsArray();
 	const notes = helpers.makeNotesArray();
+	const testFoster = helpers.makeNewFoster();
 
 	before("make knex instance", () => {
 		db = knex({
@@ -25,7 +26,7 @@ describe("Foster endpoints", () => {
 
 	afterEach("clear tables", () => helpers.clearTables(db));
 
-	describe.only("GET /foster/:dogId", () => {
+	describe("GET /foster/:dogId", () => {
 		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);
@@ -40,27 +41,61 @@ describe("Foster endpoints", () => {
 			});
 		});
 
-		// context(`Given there is data in the tables`, () => {
-		// 	beforeEach("Insert data into tables", () => {
-		// 		return db
-		// 			.into("dogs")
-		// 			.insert(dogs)
-		// 			.then((res) => {
-		// 				return db.into("users").insert(testUsers);
-		// 			})
-		// 			.then((res) => {
-		// 				return db.into("foster").insert(foster);
-		// 			});
-		// 	});
-		// 	it(`responds with 200 with adoption information`, () => {
-		// 		const dogTestId = 1;
-		// 		const expectedAdoptionInfo = adoptions[0];
-		// 		expectedAdoptionInfo.id = 1;
-		// 		return supertest(app)
-		// 			.get(`/api/v1/adoption/${dogTestId}`)
-		// 			.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-		// 			.expect(200, expectedAdoptionInfo);
-		// 	});
-		// });
+		context(`Given there is data in the tables`, () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("dogs")
+					.insert(dogs)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("foster").insert(testFoster);
+					});
+			});
+			it(`responds with 200 with foster information`, () => {
+				const dogTestId = 1;
+				return supertest(app)
+					.get(`/api/v1/foster/${dogTestId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+					.expect(200);
+			});
+		});
+	});
+	describe("POST /foster/:dogId", () => {
+		context.only(`Given there is no data in the tables`, () => {
+			beforeEach(`Seed users`, () => {
+				helpers.seedUsers(db, testUsers);
+			});
+
+			it(`responds with 400 Can't find adoption information`, () => {
+				const dogTestId = 0;
+				return supertest(app)
+					.post(`/api/v1/foster/${dogTestId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+					.expect(400, { error: `It doesn't look like dog exists.` });
+			});
+		});
+
+		context(`Given there is data in the tables`, () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("dogs")
+					.insert(dogs)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("foster").insert(testFoster);
+					});
+			});
+			it(`responds with 200 with foster information`, () => {
+				const dogTestId = 1;
+				return supertest(app)
+					.get(`/api/v1/foster/${dogTestId}`)
+					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+					.expect(200);
+			});
+		});
 	});
 });

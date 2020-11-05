@@ -8,5 +8,5 @@ CREATE TABLE foster (
   foster_country TEXT NOT NULL,
   foster_address TEXT,
   contract_url TEXT,
-  foster_completed_on TIMESTAMP NOT NULL DEFAULT now()
+  foster_completed_on TIMESTAMP
 );

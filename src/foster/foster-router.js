@@ -23,7 +23,17 @@ fosterRouter
 	.route("/:dogId")
 	.all(requireAuth)
 	.get((req, res, next) => {
-		res.status(200).send("Hello");
+		FosterService.getFosterBydogId(req.app.get("db"), req.params.dogId)
+			.then((info) => {
+				console.log(info);
+				!info
+					? res.status(400).json({ error: `Can't find dog information.` })
+					: res.status(200).send(info);
+			})
+			.catch(next);
+	})
+	.post(jsonBodyParser, (req, res, next) => {
+		//return
 	});
 
 module.exports = fosterRouter;
