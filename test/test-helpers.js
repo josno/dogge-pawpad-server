@@ -442,6 +442,7 @@ const clearTables = (db) => {
 		shots,
 		users,
 		adoption,
+		foster,
 		dogs,
 		shelter
       `
@@ -453,8 +454,10 @@ const clearTables = (db) => {
 					trx.raw(`ALTER SEQUENCE notes_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE shots_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE adoption_id_seq minvalue 0 START WITH 1`),
+					trx.raw(`ALTER SEQUENCE foster_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE shelter_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`SELECT setval('adoption_id_seq', 0)`),
+					trx.raw(`SELECT setval('foster_id_seq', 0)`),
 					trx.raw(`SELECT setval('notes_id_seq', 0)`),
 					trx.raw(`SELECT setval('shots_id_seq', 0)`),
 					trx.raw(`SELECT setval('users_id_seq', 0)`),

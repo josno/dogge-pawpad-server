@@ -11,6 +11,7 @@ const authRouter = require("./auth/auth-router");
 const usersRouter = require("./users/users-router");
 const adoptionRouter = require("./adoption/adoption-router");
 const shelterRouter = require("./shelter/shelter-router");
+const fosterRouter = require("./foster/foster-router");
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/adoption", adoptionRouter);
 app.use("/api/v1/shelter", shelterRouter);
+app.use("/api/v1/foster", fosterRouter);
 
 app.use(function errorHandler(error, req, res, next) {
 	let response;
