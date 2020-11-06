@@ -10,3 +10,5 @@ CREATE TABLE foster (
   contract_url TEXT,
   foster_completed_on TIMESTAMP
 );
+
+ALTER TYPE dog_status ADD VALUE 'Fostered' AFTER 'Current';

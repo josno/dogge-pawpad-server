@@ -63,7 +63,7 @@ describe("Foster endpoints", () => {
 		});
 	});
 	describe("POST /foster/:dogId", () => {
-		context.only(`Given there is no data in the tables`, () => {
+		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);
 			});

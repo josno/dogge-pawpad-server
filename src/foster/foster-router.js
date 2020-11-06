@@ -15,8 +15,73 @@ const jsonBodyParser = express.json();
 fosterRouter
 	.route("/")
 	.all(requireAuth)
-	.get((req, res, next) => {
-		res.status(200).send("Hello");
+	.post(jsonBodyParser, fileParser, (req, res, next) => {
+		let info = CryptoJS.AES.decrypt(req.body.data, ENCRYPTION_KEY);
+		let data = JSON.parse(info.toString(CryptoJS.enc.Utf8));
+
+		const {
+			foster_name,
+			foster_date,
+			foster_email,
+			foster_phone,
+			foster_country,
+			dog_id,
+		} = data;
+
+		const fosterObj = {
+			foster_date,
+			foster_name,
+			foster_email,
+			foster_phone,
+			foster_country,
+			dog_id,
+		};
+
+		(async () => {
+			let responseJson = null;
+			if (req.files.contract) {
+				const imgPath = req.files.contract.path;
+				let response = await cloudinary.uploader.upload(imgPath, {
+					folder: "DOG.ge/Foster_Files",
+					public_id: `${dog_id}-foster-contract`,
+				});
+				const resolved = await response;
+				responseJson = resolved;
+			}
+			return responseJson;
+		})()
+			.then((result) => {
+				result === null
+					? (fosterObj.contract_url = result)
+					: (fosterObj.contract_url = result.secure_url);
+
+				return DogsService.getDogByDogId(req.app.get("db"), dog_id);
+			})
+			.then((dog) => {
+				if (!dog || dog === undefined) {
+					res.status(404).json({ error: `Can't find dog.` });
+				} else {
+					const updateDogObj = {
+						dog_name: dog.dog_name,
+						dog_status: "Fostered",
+					};
+					return DogsService.updateDogById(
+						req.app.get("db"),
+						dog.id,
+						updateDogObj
+					);
+				}
+			})
+			.then((res) => {
+				DogsService.getDogByDogId(req.app.get("db"), dog_id).then((response) =>
+					console.log(response)
+				);
+				return FosterService.insertFoster(req.app.get("db"), fosterObj);
+			})
+			.then((adoptionRecord) => {
+				res.status(201).json({ message: "Foster completed." });
+			})
+			.catch(next);
 	});
 
 fosterRouter

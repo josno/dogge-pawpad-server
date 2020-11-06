@@ -66,7 +66,7 @@ describe("Adoption endpoints", () => {
 		});
 	});
 
-	describe("POST /adoption/:dogId", () => {
+	describe("POST /adoption", () => {
 		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);
@@ -97,7 +97,7 @@ describe("Adoption endpoints", () => {
 					});
 			});
 
-			it(`responds with 201 created `, () => {
+			it.only(`responds with 201 created `, () => {
 				return supertest(app)
 					.post("/api/v1/adoption")
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
