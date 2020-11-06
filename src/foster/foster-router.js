@@ -6,6 +6,7 @@ const cloudinary = require("cloudinary").v2;
 const formData = require("express-form-data");
 const CryptoJS = require("crypto-js");
 const fileParser = formData.parse();
+const DogsService = require("../dogs/dogs-service");
 const FosterService = require("./foster-service");
 const { requireAuth } = require("../middleware/jwt-auth");
 const { ENCRYPTION_KEY } = require("../config");
@@ -58,8 +59,10 @@ fosterRouter
 				return DogsService.getDogByDogId(req.app.get("db"), dog_id);
 			})
 			.then((dog) => {
-				if (!dog || dog === undefined) {
-					res.status(404).json({ error: `Can't find dog.` });
+				if (!dog) {
+					return res
+						.status(404)
+						.json({ error: `It doesn't look like dog exists.` });
 				} else {
 					const updateDogObj = {
 						dog_name: dog.dog_name,
@@ -73,13 +76,12 @@ fosterRouter
 				}
 			})
 			.then((res) => {
-				DogsService.getDogByDogId(req.app.get("db"), dog_id).then((response) =>
-					console.log(response)
-				);
 				return FosterService.insertFoster(req.app.get("db"), fosterObj);
 			})
-			.then((adoptionRecord) => {
-				res.status(201).json({ message: "Foster completed." });
+			.then((record) => {
+				!record
+					? res.status(400).json({ message: "Dog cannot be fostered." })
+					: res.status(201).json({ message: "Foster completed." });
 			})
 			.catch(next);
 	});
@@ -90,7 +92,6 @@ fosterRouter
 	.get((req, res, next) => {
 		FosterService.getFosterBydogId(req.app.get("db"), req.params.dogId)
 			.then((info) => {
-				console.log(info);
 				!info
 					? res.status(400).json({ error: `Can't find dog information.` })
 					: res.status(200).send(info);

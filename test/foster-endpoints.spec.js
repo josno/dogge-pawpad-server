@@ -11,6 +11,7 @@ describe("Foster endpoints", () => {
 	const shots = helpers.makeShotsArray();
 	const notes = helpers.makeNotesArray();
 	const testFoster = helpers.makeNewFoster();
+	const encryptedFoster = helpers.makeEncryptedFoster();
 
 	before("make knex instance", () => {
 		db = knex({
@@ -62,18 +63,19 @@ describe("Foster endpoints", () => {
 			});
 		});
 	});
-	describe("POST /foster/:dogId", () => {
+	describe("POST /foster", () => {
 		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);
 			});
 
-			it(`responds with 400 Can't find adoption information`, () => {
-				const dogTestId = 0;
+			it(`responds with 400 Can't find foster information`, () => {
 				return supertest(app)
-					.post(`/api/v1/foster/${dogTestId}`)
+					.post("/api/v1/foster")
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.expect(400, { error: `It doesn't look like dog exists.` });
+					.field(encryptedFoster)
+					.attach("contract", `test/ContractSample.pdf`)
+					.expect(404, { error: `It doesn't look like dog exists.` });
 			});
 		});
 
@@ -86,15 +88,26 @@ describe("Foster endpoints", () => {
 						return db.into("users").insert(testUsers);
 					})
 					.then((res) => {
-						return db.into("foster").insert(testFoster);
+						return db.into("shots").insert(shots);
+					})
+					.then((res) => {
+						return db.into("notes").insert(notes);
 					});
 			});
-			it(`responds with 200 with foster information`, () => {
-				const dogTestId = 1;
+
+			it(`responds with 201 created `, () => {
 				return supertest(app)
-					.get(`/api/v1/foster/${dogTestId}`)
+					.post("/api/v1/foster")
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.expect(200);
+					.field(encryptedFoster)
+					.attach("contract", `test/ContractSample.pdf`)
+					.expect(201, { message: "Foster completed." })
+					.then((res) => {
+						supertest(app)
+							.get("/api/v1/foster/1")
+							.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+							.then((res) => console.log(res.body));
+					});
 			});
 		});
 	});

@@ -11,6 +11,7 @@ describe("Adoption endpoints", () => {
 	const shots = helpers.makeShotsArray();
 	const notes = helpers.makeNotesArray();
 	const newAdoption = helpers.makeNewAdoption();
+	const encryptedAdoption = helpers.makeEncryptedAdoption();
 	const adoptions = helpers.makeAdoptionArray();
 
 	before("make knex instance", () => {
@@ -97,26 +98,13 @@ describe("Adoption endpoints", () => {
 					});
 			});
 
-			it.only(`responds with 201 created `, () => {
+			it(`responds with 201 created `, () => {
 				return supertest(app)
 					.post("/api/v1/adoption")
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.send(newAdoption)
-					.expect(201)
-					.then((res) => {
-						expect(res.body).to.have.property("id");
-						expect(res.body.dog_id).to.eql(newAdoption.dog_id);
-						expect(res.body.adopter_name).to.eql(newAdoption.adopter_name);
-						expect(res.body.adopter_date).to.eql(newAdoption.adopter_date);
-						expect(res.body.adopter_email).to.eql(newAdoption.adopter_email);
-						expect(res.body.adopter_phone).to.eql(newAdoption.adopter_phone);
-						expect(res.body.adopter_address).to.eql(
-							newAdoption.adopter_address
-						);
-						expect(res.headers.location).to.eql(
-							`/api/v1/adoption/${res.body.id}`
-						);
-					});
+					.field(encryptedAdoption)
+					.attach("contract", `test/ContractSample.pdf`)
+					.expect(201, { message: "Adoption completed." });
 			});
 		});
 	});

@@ -4,7 +4,9 @@ const FosterService = {
 			.insert(data)
 			.into("foster")
 			.returning("*")
-			.then((array) => array[0]);
+			.then((array) => {
+				return array[0];
+			});
 	},
 	deleteFoster(db, id) {
 		return db.from("foster").where("dog_id", id).delete();
