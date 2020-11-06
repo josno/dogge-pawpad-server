@@ -4,7 +4,9 @@ const AdoptionService = {
 			.insert(data)
 			.into("adoption")
 			.returning("*")
-			.then((array) => array[0]);
+			.then((array) => {
+				return array[0];
+			});
 	},
 	deleteAdoption(db, id) {
 		return db.from("adoption").where("dog_id", id).delete();

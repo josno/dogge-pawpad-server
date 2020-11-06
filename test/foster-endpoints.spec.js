@@ -3,16 +3,15 @@ const app = require("../src/app");
 const helpers = require("./test-helpers");
 const supertest = require("supertest");
 
-describe("Adoption endpoints", () => {
+describe("Foster endpoints", () => {
 	let db;
 
 	const testUsers = helpers.makeUsersArray();
 	const dogs = helpers.makeDogsArray();
 	const shots = helpers.makeShotsArray();
 	const notes = helpers.makeNotesArray();
-	const newAdoption = helpers.makeNewAdoption();
-	const encryptedAdoption = helpers.makeEncryptedAdoption();
-	const adoptions = helpers.makeAdoptionArray();
+	const testFoster = helpers.makeNewFoster();
+	const encryptedFoster = helpers.makeEncryptedFoster();
 
 	before("make knex instance", () => {
 		db = knex({
@@ -28,7 +27,7 @@ describe("Adoption endpoints", () => {
 
 	afterEach("clear tables", () => helpers.clearTables(db));
 
-	describe("GET /adoption/:dogId", () => {
+	describe("GET /foster/:dogId", () => {
 		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);
@@ -37,9 +36,9 @@ describe("Adoption endpoints", () => {
 			it(`responds with 400 Can't find adoption information`, () => {
 				const dogTestId = 0;
 				return supertest(app)
-					.get(`/api/v1/adoption/${dogTestId}`)
+					.get(`/api/v1/foster/${dogTestId}`)
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.expect(400, { error: `Can't find adoption information.` });
+					.expect(400, { error: `Can't find dog information.` });
 			});
 		});
 
@@ -52,33 +51,31 @@ describe("Adoption endpoints", () => {
 						return db.into("users").insert(testUsers);
 					})
 					.then((res) => {
-						return db.into("adoption").insert(adoptions);
+						return db.into("foster").insert(testFoster);
 					});
 			});
-			it(`responds with 200 with adoption information`, () => {
+			it(`responds with 200 with foster information`, () => {
 				const dogTestId = 1;
-				const expectedAdoptionInfo = adoptions[0];
-				expectedAdoptionInfo.id = 1;
 				return supertest(app)
-					.get(`/api/v1/adoption/${dogTestId}`)
+					.get(`/api/v1/foster/${dogTestId}`)
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.expect(200, expectedAdoptionInfo);
+					.expect(200);
 			});
 		});
 	});
-
-	describe("POST /adoption", () => {
+	describe("POST /foster", () => {
 		context(`Given there is no data in the tables`, () => {
 			beforeEach(`Seed users`, () => {
 				helpers.seedUsers(db, testUsers);
 			});
-			//issues with HTTP headers
-			it(`responds with 404 Can't find dog`, () => {
+
+			it(`responds with 400 Can't find foster information`, () => {
 				return supertest(app)
-					.post("/api/v1/adoption")
+					.post("/api/v1/foster")
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.send(newAdoption)
-					.expect(404, { error: `Can't find dog.` });
+					.field(encryptedFoster)
+					.attach("contract", `test/ContractSample.pdf`)
+					.expect(404, { error: `It doesn't look like dog exists.` });
 			});
 		});
 
@@ -100,58 +97,16 @@ describe("Adoption endpoints", () => {
 
 			it(`responds with 201 created `, () => {
 				return supertest(app)
-					.post("/api/v1/adoption")
+					.post("/api/v1/foster")
 					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.field(encryptedAdoption)
+					.field(encryptedFoster)
 					.attach("contract", `test/ContractSample.pdf`)
-					.expect(201, { message: "Adoption completed." });
-			});
-		});
-	});
-
-	describe("DELETE /adoption/:dogId", () => {
-		context("Given there is NO data in the tables", () => {
-			beforeEach(`Seed users`, () => {
-				helpers.seedUsers(db, testUsers);
-			});
-
-			it(`Responds with 400 Can't find dog`, () => {
-				const dogIdTest = newAdoption.dog_id;
-				return supertest(app)
-					.delete(`/api/v1/adoption/${dogIdTest}`)
-					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.expect(404, { error: `Can't find dog.` });
-			});
-		});
-		context("Given there is data in the tables", () => {
-			beforeEach("Insert data into tables", () => {
-				return db
-					.into("dogs")
-					.insert(dogs)
-					.then((res) => {
-						return db.into("users").insert(testUsers);
-					})
-					.then((res) => {
-						return db.into("adoption").insert(adoptions);
-					})
-					.then((res) => console.log("done"));
-			});
-
-			it(`Responds with 204 with successul deletion`, () => {
-				const dogIdTest = newAdoption.dog_id;
-				const expectedAdoptions = adoptions.filter(
-					(n) => n.dog_id !== dogIdTest
-				);
-
-				return supertest(app)
-					.delete(`/api/v1/adoption/${dogIdTest}`)
-					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-					.expect(204)
+					.expect(201, { message: "Foster completed." })
 					.then((res) => {
 						supertest(app)
-							.get(`/api/v1/adoption/${dogIdTest}`)
+							.get("/api/v1/foster/1")
 							.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-							.expect(expectedAdoptions);
+							.then((res) => console.log(res.body));
 					});
 			});
 		});

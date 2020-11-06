@@ -357,7 +357,49 @@ const makeNewAdoption = () => {
 	};
 };
 
-const encryptAdoption = (adoption) => {
+const makeNewFoster = () => {
+	return {
+		dog_id: 1,
+		foster_date: "2020-05-19T10:23:00.000Z",
+		foster_name: "Test Adopter",
+		foster_phone: "111-111-1111",
+		foster_country: "Poland",
+		foster_email: "email@email.com",
+		foster_address: "1 Hershey Way, Poland City, Poland, 21392132",
+	};
+};
+
+const makeEncryptedFoster = () => {
+	const foster = {
+		dog_id: 1,
+		foster_date: "2020-05-19T10:23:00.000Z",
+		foster_name: "Test Adopter",
+		foster_phone: "111-111-1111",
+		foster_country: "Poland",
+		foster_email: "email@email.com",
+		foster_address: "1 Hershey Way, Poland City, Poland, 21392132",
+	};
+
+	const ciphertext = CryptoJS.AES.encrypt(
+		JSON.stringify(foster),
+		ENCRYPTION_KEY
+	).toString();
+
+	const encrypted = { data: ciphertext };
+	return encrypted;
+};
+
+const makeEncryptedAdoption = () => {
+	const adoption = {
+		dog_id: 1,
+		adoption_date: "2020-05-19T10:23:00.000Z",
+		adopter_name: "Test Adopter",
+		phone: "111-111-1111",
+		country: "Poland",
+		email: "email@email.com",
+		adopter_address: "1 Hershey Way, Poland City, Poland, 21392132",
+	};
+
 	const ciphertext = CryptoJS.AES.encrypt(
 		JSON.stringify(adoption),
 		ENCRYPTION_KEY
@@ -442,6 +484,7 @@ const clearTables = (db) => {
 		shots,
 		users,
 		adoption,
+		foster,
 		dogs,
 		shelter
       `
@@ -453,8 +496,10 @@ const clearTables = (db) => {
 					trx.raw(`ALTER SEQUENCE notes_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE shots_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE adoption_id_seq minvalue 0 START WITH 1`),
+					trx.raw(`ALTER SEQUENCE foster_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`ALTER SEQUENCE shelter_id_seq minvalue 0 START WITH 1`),
 					trx.raw(`SELECT setval('adoption_id_seq', 0)`),
+					trx.raw(`SELECT setval('foster_id_seq', 0)`),
 					trx.raw(`SELECT setval('notes_id_seq', 0)`),
 					trx.raw(`SELECT setval('shots_id_seq', 0)`),
 					trx.raw(`SELECT setval('users_id_seq', 0)`),
@@ -488,5 +533,7 @@ module.exports = {
 	makeShelter,
 	seedShelterTable,
 	makeShotUpdateByDogId,
-	encryptAdoption,
+	makeEncryptedAdoption,
+	makeEncryptedFoster,
+	makeNewFoster,
 };
