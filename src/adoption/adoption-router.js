@@ -99,6 +99,8 @@ adoptionRouter
 						.json({ error: `Can't find adoption information.` });
 				}
 
+				response.dog_status = "Adopted";
+
 				const ciphertext = CryptoJS.AES.encrypt(
 					JSON.stringify(response),
 					ENCRYPTION_KEY

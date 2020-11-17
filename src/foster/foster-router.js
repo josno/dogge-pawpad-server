@@ -91,15 +91,51 @@ fosterRouter
 	.all(requireAuth)
 	.get((req, res, next) => {
 		FosterService.getFosterBydogId(req.app.get("db"), req.params.dogId)
-			.then((info) => {
-				!info
-					? res.status(400).json({ error: `Can't find dog information.` })
-					: res.status(200).send(info);
+			.then((response) => {
+				if (!response) {
+					return res
+						.status(400)
+						.json({ error: `Can't find foster information.` });
+				}
+
+				response.dog_status = "Fostered";
+
+				const ciphertext = CryptoJS.AES.encrypt(
+					JSON.stringify(response),
+					ENCRYPTION_KEY
+				).toString();
+
+				const responseObj = { data: ciphertext };
+
+				res.status(200).json(responseObj);
 			})
+
 			.catch(next);
 	})
-	.post(jsonBodyParser, (req, res, next) => {
-		//return
+	.delete((req, res, next) => {
+		DogsService.getDogByDogId(req.app.get("db"), req.params.dogId)
+			.then((dog) => {
+				if (!dog) {
+					return res.status(404).json({ error: `Can't find dog.` });
+				}
+
+				const updateDogObj = {
+					dog_name: dog.dog_name,
+					dog_status: "Current",
+				};
+				return DogsService.updateDogById(
+					req.app.get("db"),
+					dog.id,
+					updateDogObj
+				);
+			})
+			.then((updatedDog) => {
+				return FosterService.deleteFoster(req.app.get("db"), req.params.dogId);
+			})
+			.then((deletedFoster) => {
+				res.status(204).end();
+			})
+			.catch(next);
 	});
 
 module.exports = fosterRouter;
