@@ -11,6 +11,7 @@ describe("Foster endpoints", () => {
 	const shots = helpers.makeShotsArray();
 	const notes = helpers.makeNotesArray();
 	const testFoster = helpers.makeNewFoster();
+	const fosterList = helpers.makeFosterArray();
 	const encryptedFoster = helpers.makeEncryptedFoster();
 
 	before("make knex instance", () => {
@@ -107,6 +108,53 @@ describe("Foster endpoints", () => {
 							.get("/api/v1/foster/1")
 							.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
 							.then((res) => console.log(res.body));
+					});
+			});
+		});
+	});
+
+	describe("DELETE /foster/:dogId", () => {
+		context("Given there is NO data in the tables", () => {
+			beforeEach(`Seed users`, () => {
+				helpers.seedUsers(db, testUsers);
+			});
+
+			it(`Responds with 400 Can't find dog`, () => {
+				const dogIdTest = testFoster.dog_id;
+				return supertest(app)
+					.delete(`/api/v1/foster/${dogIdTest}`)
+					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+					.expect(404, { error: `Can't find dog.` });
+			});
+		});
+		context("Given there is data in the tables", () => {
+			beforeEach("Insert data into tables", () => {
+				return db
+					.into("dogs")
+					.insert(dogs)
+					.then((res) => {
+						return db.into("users").insert(testUsers);
+					})
+					.then((res) => {
+						return db.into("foster").insert(testFoster);
+					});
+			});
+
+			it(`Responds with 204 with successul deletion`, () => {
+				const dogIdTest = testFoster.dog_id;
+				const expectedFosters = fosterList.filter(
+					(n) => n.dog_id !== dogIdTest
+				);
+
+				return supertest(app)
+					.delete(`/api/v1/foster/${dogIdTest}`)
+					.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+					.expect(204)
+					.then((res) => {
+						supertest(app)
+							.get(`/api/v1/foster/${dogIdTest}`)
+							.set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+							.expect(expectedFosters);
 					});
 			});
 		});

@@ -369,6 +369,29 @@ const makeNewFoster = () => {
 	};
 };
 
+const makeFosterArray = () => {
+	return [
+		{
+			dog_id: 1,
+			foster_date: "2020-05-19T10:23:00.000Z",
+			foster_name: "Test Adopter",
+			foster_phone: "111-111-1111",
+			foster_country: "Poland",
+			foster_email: "email@email.com",
+			foster_address: "1 Hershey Way, Poland City, Poland, 21392132",
+		},
+		{
+			dog_id: 2,
+			foster_date: "2020-04-20T10:23:00.000Z",
+			foster_name: "Third Test",
+			foster_phone: "222-222-2222",
+			foster_country: "USA",
+			foster_email: "email@email.com",
+			foster_address: "1 Mars Way, USA City, USA, 95555",
+		},
+	];
+};
+
 const makeEncryptedFoster = () => {
 	const foster = {
 		dog_id: 1,
@@ -536,4 +559,5 @@ module.exports = {
 	makeEncryptedAdoption,
 	makeEncryptedFoster,
 	makeNewFoster,
+	makeFosterArray,
 };
