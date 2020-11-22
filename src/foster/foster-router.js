@@ -138,4 +138,32 @@ fosterRouter
 			.catch(next);
 	});
 
+fosterRouter
+	.route("/contract-upload/:dogId")
+	.all(requireAuth)
+	.put(jsonBodyParser, fileParser, (req, res, next) => {
+		const imgPath = req.files.contract.path;
+		const { dogId } = req.params;
+
+		const updatedFoster = {};
+		cloudinary.uploader
+			.upload(imgPath, {
+				folder: "DOG.ge/Foster_Files",
+				public_id: `${dogId}-contract`,
+			})
+			.then((result) => {
+				if (!result) {
+					res.status(400).json({ error: `Can't upload image.` });
+				}
+
+				updatedFoster.contract_url = result.secure_url;
+				return FosterService.updateFosterImg(
+					req.app.get("db"),
+					req.params.dogId,
+					updatedFoster
+				);
+			})
+			.then((response) => res.status(200).json({ message: "Contract Updated" }))
+			.catch(next);
+	});
 module.exports = fosterRouter;

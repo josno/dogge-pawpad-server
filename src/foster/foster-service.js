@@ -14,6 +14,12 @@ const FosterService = {
 	getFosterBydogId(db, id) {
 		return db.from("foster").select("*").where("dog_id", id).first();
 	},
+	updateFosterImg(db, id, url) {
+		return db
+			.from("foster")
+			.where("dog_id", id)
+			.update(url, ["dog_id", "contract_url"]);
+	},
 };
 
 module.exports = FosterService;
