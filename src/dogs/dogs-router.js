@@ -159,10 +159,10 @@ dogsRouter
 		const {
 			dog_name,
 			age,
-			profile_img,
 			gender,
-			spayedneutered,
 			arrival_date,
+			tag_number,
+			microchip,
 			dog_status,
 		} = req.body;
 
@@ -170,10 +170,10 @@ dogsRouter
 			id: dogId,
 			dog_name,
 			age,
-			profile_img,
 			gender,
-			spayedneutered,
 			arrival_date,
+			tag_number,
+			microchip,
 			dog_status,
 		};
 
@@ -209,7 +209,10 @@ dogsRouter
 						if (!returned) {
 							return res.status(404).json({ error: `Can't find dog.` });
 						}
-						res.status(204).end();
+
+						res
+							.status(200)
+							.send({ id: returned, message: `Dog successfully updated.` });
 					});
 			})
 			.catch(next);

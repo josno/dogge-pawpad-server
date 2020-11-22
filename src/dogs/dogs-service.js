@@ -2,12 +2,28 @@ const DogsService = {
 	getAllDogs(db) {
 		return db
 			.from("dogs")
-			.select("id", "profile_img", "dog_name", "dog_status");
+			.select(
+				"id",
+				"profile_img",
+				"dog_name",
+				"dog_status",
+				"tag_number",
+				"age",
+				"gender"
+			);
 	},
 	getAllDogsByShelterId(db, shelterId) {
 		return db
 			.from("dogs")
-			.select("id", "profile_img", "dog_name", "dog_status")
+			.select(
+				"id",
+				"profile_img",
+				"dog_name",
+				"dog_status",
+				"tag_number",
+				"age",
+				"gender"
+			)
 			.where("shelter_id", shelterId);
 	},
 	getDogByDogId(db, id) {
@@ -66,7 +82,12 @@ const DogsService = {
 			.then((dogArray) => dogArray[0]);
 	},
 	updateDogById(db, id, dog) {
-		return db.from("dogs").where("id", id).update(dog);
+		return db
+			.from("dogs")
+			.where("id", id)
+			.update(dog)
+			.returning("*")
+			.then((dogArray) => dogArray[0].id);
 	},
 	deleteByDogId(db, id) {
 		return db.from("dogs").where({ id }).delete();
