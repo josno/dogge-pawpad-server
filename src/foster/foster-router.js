@@ -44,7 +44,6 @@ fosterRouter
 				const imgPath = req.files.contract.path;
 				let response = await cloudinary.uploader.upload(imgPath, {
 					folder: "DOG.ge/Foster_Files",
-					public_id: `${dog_id}-foster-contract`,
 				});
 				const resolved = await response;
 				responseJson = resolved;
@@ -149,7 +148,6 @@ fosterRouter
 		cloudinary.uploader
 			.upload(imgPath, {
 				folder: "DOG.ge/Foster_Files",
-				public_id: `${dogId}-contract`,
 			})
 			.then((result) => {
 				if (!result) {

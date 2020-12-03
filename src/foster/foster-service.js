@@ -12,7 +12,7 @@ const FosterService = {
 		return db.from("foster").where("dog_id", id).delete();
 	},
 	getFosterBydogId(db, id) {
-		return db.from("foster").select("*").where("dog_id", id).first();
+		return db.from("foster").select("*").where("dog_id", id);
 	},
 	updateFosterImg(db, id, url) {
 		return db
