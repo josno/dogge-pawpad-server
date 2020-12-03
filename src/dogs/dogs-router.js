@@ -113,6 +113,21 @@ dogsRouter
 			})
 			.catch(next);
 	});
+
+dogsRouter
+	.route("/status/:dogId")
+	.all(requireAuth)
+	.get((req, res, next) => {
+		DogsService.getStatusById(req.app.get("db"), req.params.dogId)
+			.then((response) => {
+				if (!response || response.length === 0) {
+					return res.status(404).json({ error: `Can't find dog.` });
+				}
+				return res.status(200).json(response);
+			})
+			.catch(next);
+	});
+
 dogsRouter
 	.route("/images/:tagNumber")
 	.all(requireAuth)

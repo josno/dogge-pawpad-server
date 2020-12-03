@@ -89,6 +89,13 @@ const DogsService = {
 			.returning("*")
 			.then((dogArray) => dogArray[0].id);
 	},
+	getStatusById(db, id) {
+		return db
+			.from("dogs")
+			.select("dogs.dog_status")
+			.where("dogs.id", id)
+			.then((dogArray) => dogArray[0]);
+	},
 	deleteByDogId(db, id) {
 		return db.from("dogs").where({ id }).delete();
 	},
