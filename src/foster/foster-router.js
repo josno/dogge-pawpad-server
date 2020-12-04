@@ -23,6 +23,7 @@ fosterRouter
 		const {
 			foster_name,
 			foster_date,
+			foster_completed_on,
 			foster_email,
 			foster_phone,
 			foster_country,
@@ -36,6 +37,7 @@ fosterRouter
 			foster_phone,
 			foster_country,
 			dog_id,
+			foster_completed_on,
 		};
 
 		(async () => {
@@ -138,6 +140,56 @@ fosterRouter
 	});
 
 fosterRouter
+	.route("/update/:fosterId")
+	.all(requireAuth)
+	.patch(fileParser, jsonBodyParser, (req, res, next) => {
+		const { fosterId } = req.params;
+		let info = CryptoJS.AES.decrypt(req.body.data, ENCRYPTION_KEY);
+		let data = JSON.parse(info.toString(CryptoJS.enc.Utf8));
+
+		const {
+			foster_name,
+			foster_date,
+			foster_completed_on,
+			foster_email,
+			foster_phone,
+			foster_country,
+			dog_id,
+		} = data;
+
+		const fosterObj = {
+			foster_date,
+			foster_name,
+			foster_email,
+			foster_phone,
+			foster_country,
+			dog_id,
+			foster_completed_on,
+		};
+
+		DogsService.getDogByDogId(req.app.get("db"), dog_id)
+			.then((dog) => {
+				if (!dog) {
+					return res
+						.status(404)
+						.json({ error: `It doesn't look like dog exists.` });
+				} else {
+					return FosterService.updateFoster(
+						req.app.get("db"),
+						fosterId,
+						fosterObj
+					);
+				}
+			})
+			.then((r) => {
+				console.log(r);
+				res.status(200).send({ message: "Foster updated." });
+			})
+
+			.catch(next);
+	});
+
+fosterRouter
 	.route("/contract-upload/:dogId")
 	.all(requireAuth)
 	.put(jsonBodyParser, fileParser, (req, res, next) => {
@@ -161,7 +213,9 @@ fosterRouter
 					updatedFoster
 				);
 			})
-			.then((response) => res.status(200).json({ message: "Contract Updated" }))
+			.then((foster) => {
+				res.status(200).send({ id: `${foster.id}`, message: "Foster Updated" });
+			})
 			.catch(next);
 	});
 module.exports = fosterRouter;

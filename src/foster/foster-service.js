@@ -14,6 +14,15 @@ const FosterService = {
 	getFosterBydogId(db, id) {
 		return db.from("foster").select("*").where("dog_id", id);
 	},
+	updateFoster(db, fosterId, foster) {
+		return db
+			.from("foster")
+			.where("id", fosterId)
+			.update(foster)
+			.then((foster) => {
+				return foster;
+			});
+	},
 	updateFosterImg(db, id, url) {
 		return db
 			.from("foster")
