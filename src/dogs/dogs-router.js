@@ -180,6 +180,7 @@ dogsRouter
 			microchip,
 			dog_status,
 			profile_img,
+			spayedneutered,
 		} = req.body;
 
 		const dogToUpdate = {
@@ -192,6 +193,7 @@ dogsRouter
 			microchip,
 			dog_status,
 			profile_img,
+			spayedneutered,
 		};
 
 		DogsService.getDogByDogId(req.app.get("db"), req.params.dogId)
