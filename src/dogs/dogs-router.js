@@ -129,9 +129,15 @@ dogsRouter
 	.all(requireAuth)
 	.delete((req, res, next) => {
 		const { imgName } = req.params;
+		console.log;
 		cloudinary.uploader
-			.destroy(`DOG.ge/${imgName}`)
-			.then((response) => res.status(204).json("Image deleted"))
+			.destroy(`DOG.ge/${imgName}`, (res) => {
+				return res;
+			})
+			.then((response) => {
+				console.log(response);
+				res.status(200).json("Image deleted");
+			})
 			.catch(next);
 	});
 
@@ -229,7 +235,7 @@ dogsRouter
 				DogsService.deleteByDogId(req.app.get("db"), dogId).then(
 					(rowsAffected) => {
 						res
-							.status(204)
+							.status(200)
 							.json({ message: `Dog with id ${dogId} has been deleted. ` });
 					}
 				);
