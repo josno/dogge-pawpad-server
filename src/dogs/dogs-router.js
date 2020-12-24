@@ -71,7 +71,6 @@ dogsRouter
 		cloudinary.uploader
 			.upload(imgPath, {
 				folder: "DOG.ge",
-				public_id: tag_number,
 			})
 			.then((result) => {
 				if (!result) {
@@ -94,27 +93,6 @@ dogsRouter
 	});
 
 dogsRouter
-	.route("/images")
-	.all(requireAuth)
-	.post(jsonBodyParser, fileParser, (req, res, next) => {
-		const imgPath = req.files.profile_img.path;
-		const { tag_number } = req.body;
-
-		cloudinary.uploader
-			.upload(imgPath, {
-				folder: "DOG.ge",
-				public_id: tag_number,
-			})
-			.then((result) => {
-				if (!result) {
-					res.status(400).json({ error: `Can't upload image.` });
-				}
-				res.status(204).json(result.url);
-			})
-			.catch(next);
-	});
-
-dogsRouter
 	.route("/status/:dogId")
 	.all(requireAuth)
 	.get((req, res, next) => {
@@ -129,22 +107,13 @@ dogsRouter
 	});
 
 dogsRouter
-	.route("/images/:tagNumber")
+	.route("/images")
 	.all(requireAuth)
-	.delete((req, res, next) => {
-		const { tagNumber } = req.params;
-		cloudinary.uploader
-			.destroy(`DOG.ge/${tagNumber}`)
-			.then((response) => res.status(204).json("Image deleted"))
-			.catch(next);
-	})
-	.put(jsonBodyParser, fileParser, (req, res, next) => {
+	.post(jsonBodyParser, fileParser, (req, res, next) => {
 		const imgPath = req.files.profile_img.path;
-		const { tagNumber } = req.params;
 		cloudinary.uploader
 			.upload(imgPath, {
 				folder: "DOG.ge",
-				public_id: tagNumber,
 			})
 			.then((result) => {
 				if (!result) {
@@ -152,6 +121,17 @@ dogsRouter
 				}
 				res.status(200).json(result.secure_url);
 			})
+			.catch(next);
+	});
+
+dogsRouter
+	.route("/images/:imgName")
+	.all(requireAuth)
+	.delete((req, res, next) => {
+		const { imgName } = req.params;
+		cloudinary.uploader
+			.destroy(`DOG.ge/${imgName}`)
+			.then((response) => res.status(204).json("Image deleted"))
 			.catch(next);
 	});
 
