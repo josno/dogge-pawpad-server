@@ -46,7 +46,6 @@ dogsRouter
 
 		const requiredFields = {
 			dog_name,
-			spayedneutered,
 			gender,
 		};
 
@@ -129,7 +128,6 @@ dogsRouter
 	.all(requireAuth)
 	.delete((req, res, next) => {
 		const { imgName } = req.params;
-		console.log;
 		cloudinary.uploader
 			.destroy(`DOG.ge/${imgName}`, (res) => {
 				return res;
