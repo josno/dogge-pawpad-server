@@ -7,7 +7,7 @@ CREATE TABLE dogs (
     dog_name TEXT NOT NULL,
     profile_img TEXT NOT NULL,
     gender gender_type,
-    age TEXT,
+    age TIMESTAMP,
     date_created TIMESTAMP DEFAULT NOW() NOT NULL, 
     arrival_date TIMESTAMP,
     spayedNeutered BOOLEAN NOT NULL, 

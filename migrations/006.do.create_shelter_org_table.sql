@@ -21,3 +21,7 @@ ALTER TABLE dogs
   ADD COLUMN
     shelter_id INTEGER REFERENCES shelter(id)
     ON DELETE SET NULL;
+
+ALTER TABLE dogs
+  ADD COLUMN
+    microchip_date TIMESTAMP NOT NULL DEFAULT now();
