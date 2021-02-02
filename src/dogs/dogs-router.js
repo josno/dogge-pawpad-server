@@ -37,11 +37,11 @@ dogsRouter
 			dog_name,
 			age,
 			gender,
-			spayedneutered,
 			arrival_date,
 			tag_number,
 			microchip,
 			shelter_id,
+			microchip_date,
 		} = req.body;
 
 		const requiredFields = {
@@ -59,12 +59,12 @@ dogsRouter
 			dog_name,
 			age,
 			gender,
-			spayedneutered,
 			arrival_date,
 			tag_number,
 			microchip,
 			dog_status: "Current",
 			shelter_id,
+			microchip_dates,
 		};
 
 		cloudinary.uploader
@@ -164,7 +164,7 @@ dogsRouter
 			microchip,
 			dog_status,
 			profile_img,
-			spayedneutered,
+			microchip_date,
 		} = req.body;
 
 		const dogToUpdate = {
@@ -177,7 +177,7 @@ dogsRouter
 			microchip,
 			dog_status,
 			profile_img,
-			spayedneutered,
+			microchip_date,
 		};
 
 		DogsService.getDogByDogId(req.app.get("db"), req.params.dogId)

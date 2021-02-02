@@ -43,6 +43,7 @@ const DogsService = {
 				"dogs.updated_by",
 				"dogs.tag_number",
 				"dogs.microchip",
+				"dogs.microchip_date",
 				"dogs.dog_status",
 				"dogs.archive_date",
 				db.raw(
@@ -69,6 +70,7 @@ const DogsService = {
 				"dogs.updated_by",
 				"dogs.tag_number",
 				"dogs.microchip",
+				"dogs.microchip_date",
 				"dogs.dog_status",
 				"dogs.archive_date"
 			)
