@@ -227,16 +227,19 @@ dogsRouter
       .then((dog) => {
         if (!dog || dog.length === 0) {
           return res.status(404).json({ error: `Can't find dog.` })
+        } else {
+          const imgSplit = dog.profile_img.split('/')
+          const imgName = imgSplit[imgSplit.length - 1].split('.')[0]
+          return cloudinary.uploader.destroy(`DOG.ge/${imgName}`)
         }
-
-        cloudinary.uploader.destroy(`DOG.ge/${dog.tag_number}`)
-        DogsService.deleteByDogId(req.app.get('db'), dogId).then(
-          (rowsAffected) => {
-            res
-              .status(200)
-              .json({ message: `Dog with id ${dogId} has been deleted. ` })
-          }
-        )
+      })
+      .then((res) => {
+        return DogsService.deleteByDogId(req.app.get('db'), dogId)
+      })
+      .then((rowsAffected) => {
+        res
+          .status(200)
+          .json({ message: `Dog with id ${dogId} has been deleted. ` })
       })
       .catch(next)
   })
