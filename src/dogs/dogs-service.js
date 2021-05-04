@@ -124,7 +124,8 @@ const DogsService = {
         db.raw(
           `json_agg(
 							json_build_object(
-								shots.shot_name, shots.shot_date
+								'shot_name', shots.shot_name, 
+								'shot_date', shots.shot_date
 							))
 						AS "shotsCompleted"`
         )
