@@ -92,6 +92,19 @@ dogsRouter
   })
 
 dogsRouter
+  .route('/dogsList')
+  .all(requireAuth)
+  .get((req, res, next) => {
+    if (!req.query.shelterId) {
+      res.status(400).json({ error: 'Missing shelter information.' })
+    }
+    DogsService.getDogList(
+      req.app.get('db'),
+      req.query.shelterId
+    ).then((response) => res.status(200).json(response))
+  })
+
+dogsRouter
   .route('/status/:dogId')
   .all(requireAuth)
   .get((req, res, next) => {
